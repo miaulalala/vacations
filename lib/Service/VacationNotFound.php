@@ -5,5 +5,5 @@ declare(strict_types=1);
 
 namespace OCA\Vacation\Service;
 
-class NoteNotFound extends \Exception {
+class VacationNotFound extends \Exception {
 }

@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
 use OCP\AppFramework\Http;
 use OCP\IRequest;
 
-use OCA\Vacation\Service\NoteNotFound;
-use OCA\Vacation\Service\NoteService;
+use OCA\Vacation\Service\VacationNotFound;
+use OCA\Vacation\Service\VacationService;
 use OCA\Vacation\Controller\NoteController;
 
 class NoteControllerTest extends TestCase {
@@ -22,7 +22,7 @@ class NoteControllerTest extends TestCase {
 
 	public function setUp(): void {
 		$this->request = $this->getMockBuilder(IRequest::class)->getMock();
-		$this->service = $this->getMockBuilder(NoteService::class)
+		$this->service = $this->getMockBuilder(VacationService::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$this->controller = new NoteController($this->request, $this->service, $this->userId);
@@ -48,7 +48,7 @@ class NoteControllerTest extends TestCase {
 		// test the correct status code if no note is found
 		$this->service->expects($this->once())
 			->method('update')
-			->will($this->throwException(new NoteNotFound()));
+			->will($this->throwException(new VacationNotFound()));
 
 		$result = $this->controller->update(3, 'title', 'content');
 

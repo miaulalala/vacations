@@ -5,30 +5,30 @@ declare(strict_types=1);
 
 namespace OCA\Vacation\Tests\Unit\Service;
 
-use OCA\Vacation\Service\NoteNotFound;
+use OCA\Vacation\Service\VacationNotFound;
 use PHPUnit\Framework\TestCase;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 
-use OCA\Vacation\Db\Note;
-use OCA\Vacation\Service\NoteService;
-use OCA\Vacation\Db\NoteMapper;
+use OCA\Vacation\Db\Vacation;
+use OCA\Vacation\Service\VacationService;
+use OCA\Vacation\Db\VacationMapper;
 
 class NoteServiceTest extends TestCase {
-	private NoteService $service;
+	private VacationService $service;
 	private string $userId = 'john';
 	private $mapper;
 
 	public function setUp(): void {
-		$this->mapper = $this->getMockBuilder(NoteMapper::class)
+		$this->mapper = $this->getMockBuilder(VacationMapper::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->service = new NoteService($this->mapper);
+		$this->service = new VacationService($this->mapper);
 	}
 
 	public function testUpdate(): void {
 		// the existing note
-		$note = Note::fromRow([
+		$note = Vacation::fromRow([
 			'id' => 3,
 			'title' => 'yo',
 			'content' => 'nope'
@@ -39,7 +39,7 @@ class NoteServiceTest extends TestCase {
 			->will($this->returnValue($note));
 
 		// the note when updated
-		$updatedNote = Note::fromRow(['id' => 3]);
+		$updatedNote = Vacation::fromRow(['id' => 3]);
 		$updatedNote->setTitle('title');
 		$updatedNote->setContent('content');
 		$this->mapper->expects($this->once())
@@ -53,7 +53,7 @@ class NoteServiceTest extends TestCase {
 	}
 
 	public function testUpdateNotFound(): void {
-		$this->expectException(NoteNotFound::class);
+		$this->expectException(VacationNotFound::class);
 		// test the correct status code if no note is found
 		$this->mapper->expects($this->once())
 			->method('find')

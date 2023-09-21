@@ -12,18 +12,18 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
- * @template-extends QBMapper<Note>
+ * @template-extends QBMapper<Vacation>
  */
-class NoteMapper extends QBMapper {
+class VacationMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'vacation', Note::class);
+		parent::__construct($db, 'vacation', Vacation::class);
 	}
 
 	/**
 	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
 	 * @throws DoesNotExistException
 	 */
-	public function find(int $id, string $userId): Note {
+	public function find(int $id, string $userId): Vacation {
 		/* @var $qb IQueryBuilder */
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
