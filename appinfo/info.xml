@@ -9,9 +9,10 @@
     <name>Vacation</name>
     <summary>Vacation Requests</summary>
     <description><![CDATA[...and approvals]]></description>
-    <version>0.0.1</version>
+    <version>0.0.3</version>
     <licence>agpl</licence>
-    <author mail="anna.larch@gmx.net" >Anna Larch</author>
+	<author mail="anna.larch@gmx.net" >Anna Larch</author>
+	<author mail="anna.larch@gmx.net" >Anna Larch</author>
     <namespace>Vacation</namespace>
     <category>tools</category>
     <bugs>https://github.com/miaulalala/vacations/issues</bugs>
@@ -25,4 +26,8 @@
 			<icon>vacation.svg</icon>
         </navigation>
     </navigations>
+	<settings>
+		<admin-section>OCA\Vacation\Settings\Section</admin-section>
+		<admin>OCA\Vacation\Settings\AdminSettings</admin>
+	</settings>
 </info>
