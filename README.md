@@ -1,2 +1,0 @@
-# vacations
-Nextcloud Vacation app
