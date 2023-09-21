@@ -58,6 +58,11 @@ class Version000001Date20181013124731 extends SimpleMigrationStep {
 			$table->addColumn('status_message', Types::TEXT, [
 				'notnull' => true,
 			]);
+			$table->addColumn('token', Types::STRING, [
+				'notnull' => false,
+				'lenght' => 64
+			]);
+
 
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['user_id'], 'vacation_user_id_index');
