@@ -6,7 +6,9 @@ declare(strict_types=1);
 namespace OCA\Vacation\Controller;
 
 use OC\AppFramework\Http;
+use OC\CapabilitiesManager;
 use OC\Core\Controller\OCSController;
+use OC\Security\IdentityProof\Manager;
 use OCA\Vacation\AppInfo\Application;
 use OCA\Vacation\Http\JsonResponse;
 use OCA\Vacation\Service\VacationService;
@@ -14,11 +16,22 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IRequest;
+use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Util;
 
 class VacationController extends OCSController {
-	public function __construct(IRequest $request, private string $userId, private VacationService $service) {
-		parent::__construct(Application::APP_ID, $request);
+
+	private string $userId;
+	public function __construct(IRequest $request,
+		$userId,
+		private VacationService $service,
+		private CapabilitiesManager $capabilitiesManager,
+		private IUserSession $userSession,
+		private IUserManager $userManager,
+		private Manager $keyManager,) {
+		$this->userId = $userId;
+		parent::__construct(Application::APP_ID, $request, $this->capabilitiesManager, $this->userSession, $this->userManager, $this->keyManager );
 	}
 
 	/**
