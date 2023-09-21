@@ -55,10 +55,11 @@ class Version000001Date20181013124731 extends SimpleMigrationStep {
 			$table->addColumn('signoff_user_id', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
-				'default' => null
+				'default' => null,
 			]);
 			$table->addColumn('status', Types::SMALLINT, [
 				'notnull' => true,
+				'default' => 0,
 			]);
 			$table->addColumn('status_message', Types::TEXT, [
 				'notnull' => false,
