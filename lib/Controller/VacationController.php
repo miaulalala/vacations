@@ -26,9 +26,8 @@ class VacationController extends OCSController {
 	 * @NoCSRFRequired
 	 */
 	public function index(): DataResponse {
-		Util::addScript(Application::APP_ID, 'vacation-main');
-
-		return new TemplateResponse(Application::APP_ID, 'main');
+		$vacations = $this->service->findAll($this->userId);
+		return new DataResponse([$vacations], Http::STATUS_OK);
 	}
 
 	public function create(string $start,
@@ -36,8 +35,8 @@ class VacationController extends OCSController {
 		int $dayCount,
 		string $signature,
 		bool $signatureVerified): DataResponse {
-		$this->service->create($this->userId, $start, $end, $dayCount, $signature, $signatureVerified);
-		return new DataResponse([], Http::STATUS_OK);
+		$vacation = $this->service->create($this->userId, $start, $end, $dayCount, $signature, $signatureVerified);
+		return new DataResponse([$vacation], Http::STATUS_OK);
 	}
 
 	public function update(int $id,
@@ -46,8 +45,8 @@ class VacationController extends OCSController {
 		int $dayCount,
 		string $signature,
 		bool $signatureVerified): DataResponse {
-		$this->service->update($id, $this->userId, $start, $end, $dayCount, $signature, $signatureVerified);
-		return new DataResponse([], Http::STATUS_OK);
+		$vacation = $this->service->update($id, $this->userId, $start, $end, $dayCount, $signature, $signatureVerified);
+		return new DataResponse([$vacation], Http::STATUS_OK);
 	}
 
 	public function destroy(int $id): DataResponse {
