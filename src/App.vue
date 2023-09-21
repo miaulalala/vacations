@@ -1,8 +1,9 @@
+<!--
+	SPDX-FileCopyrightText: Anna Larch <anna.larch@gmx.net>
+	SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 <template>
-    <!--
-    SPDX-FileCopyrightText: Anna Larch <anna.larch@gmx.net>
-    SPDX-License-Identifier: AGPL-3.0-or-later
-    -->
 	<div id="content" class="app-vacation">
 		<AppNavigation>
 			<AppNavigationNew v-if="!loading"
@@ -22,51 +23,52 @@
 							icon="icon-close"
 							@click="cancelNewNote(note)">
 							{{
-							t('vacation', 'Cancel note creation') }}
+								t('vacation', 'Cancel note creation') }}
 						</ActionButton>
 						<ActionButton v-else
 							icon="icon-delete"
 							@click="deleteNote(note)">
 							{{
-							 t('vacation', 'Delete note') }}
+								t('vacation', 'Delete note') }}
 						</ActionButton>
 					</template>
 				</AppNavigationItem>
 			</ul>
 		</AppNavigation>
 		<AppContent>
-			<div v-if="currentNote">
-				<input ref="title"
-					v-model="currentNote.title"
-					type="text"
-					:disabled="updating">
-				<textarea ref="content" v-model="currentNote.content" :disabled="updating" />
-				<input type="button"
-					class="primary"
-					:value="t('vacation', 'Save')"
-					:disabled="updating || !savePossible"
-					@click="saveNote">
-			</div>
-			<div v-else id="emptycontent">
-				<div class="icon-file" />
-				<h2>{{
-				 t('vacation', 'Create a note to get started') }}</h2>
-			</div>
+			<form>
+				<NcDatetimePicker v-model="start"
+					type="date" />
+				<NcDatetimePicker v-model="end"
+					type="date" />
+				<NcTextField :value.sync="days" label="Number of days" />
+				<NcTextField :value.sync="signature" label="Signature" />
+				<NcCheckboxRadioSwitch :checked.sync="signatureAccepted" />
+				<span>Signature accepted</span>
+				<NcButton @click="createVacation" />
+			</form>
 		</AppContent>
 	</div>
 </template>
 
 <script>
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import AppContent from '@nextcloud/vue/dist/Components/AppContent'
-import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import AppNavigationItem from '@nextcloud/vue/dist/Components/AppNavigationItem'
-import AppNavigationNew from '@nextcloud/vue/dist/Components/AppNavigationNew'
+import {
+	NcActionButton as ActionButton,
+	NcAppContent as AppContent,
+	NcAppNavigation as AppNavigation,
+	NcAppNavigationItem as AppNavigationItem,
+	NcAppNavigationNew as AppNavigationNew,
+	NcTextField,
+	NcDatetimePicker,
+	NcCheckboxRadioSwitch,
+	NcButton,
+} from '@nextcloud/vue'
 
 import '@nextcloud/dialogs/styles/toast.scss'
-import { generateUrl } from '@nextcloud/router'
+import { generateUrl, generateOcsUrl } from '@nextcloud/router'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
+import { formatDate } from './date.js'
 
 export default {
 	name: 'App',
@@ -76,6 +78,10 @@ export default {
 		AppNavigation,
 		AppNavigationItem,
 		AppNavigationNew,
+		NcDatetimePicker,
+		NcCheckboxRadioSwitch,
+		NcTextField,
+		NcButton,
 	},
 	data() {
 		return {
@@ -83,12 +89,19 @@ export default {
 			currentNoteId: null,
 			updating: false,
 			loading: true,
+
+			start: new Date(),
+			end: null,
+			days: '0',
+			signature: '',
+			signatureAccepted: false,
 		}
 	},
 	computed: {
 		/**
 		 * Return the currently selected note object
-		 * @returns {Object|null}
+		 *
+		 * @return {object | null}
 		 */
 		currentNote() {
 			if (this.currentNoteId === null) {
@@ -99,7 +112,8 @@ export default {
 
 		/**
 		 * Returns true if a note is selected and its title is not empty
-		 * @returns {Boolean}
+		 *
+		 * @return {boolean}
 		 */
 		savePossible() {
 			return this.currentNote && this.currentNote.title !== ''
@@ -120,9 +134,20 @@ export default {
 	},
 
 	methods: {
+		async createVacation() {
+			const url = generateOcsUrl('/apps/vacation/api/v1/vacation')
+			await axios.post(url, {
+				start: formatDate(this.start),
+				end: formatDate(this.end),
+				dayCount: parseInt(this.days),
+				signature: this.signature,
+				signatureVerified: this.signatureAccepted,
+			})
+		},
 		/**
 		 * Create a new note and focus the note content field automatically
-		 * @param {Object} note Note object
+		 *
+		 * @param {object} note Note object
 		 */
 		openNote(note) {
 			if (this.updating) {
@@ -171,7 +196,8 @@ export default {
 		},
 		/**
 		 * Create a new note by sending the information to the server
-		 * @param {Object} note Note object
+		 *
+		 * @param {object} note Note object
 		 */
 		async createNote(note) {
 			this.updating = true
@@ -188,7 +214,8 @@ export default {
 		},
 		/**
 		 * Update an existing note on the server
-		 * @param {Object} note Note object
+		 *
+		 * @param {object} note Note object
 		 */
 		async updateNote(note) {
 			this.updating = true
@@ -202,7 +229,8 @@ export default {
 		},
 		/**
 		 * Delete a note, remove it from the frontend and show a hint
-		 * @param {Object} note Note object
+		 *
+		 * @param {object} note Note object
 		 */
 		async deleteNote(note) {
 			try {
@@ -220,6 +248,7 @@ export default {
 	},
 }
 </script>
+
 <style scoped>
 	#app-content > div {
 		width: 100%;
@@ -238,4 +267,4 @@ export default {
 		flex-grow: 1;
 		width: 100%;
 	}
-</style>
+</stylel>
