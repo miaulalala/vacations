@@ -15,8 +15,8 @@ return [
 	'ocs' => [
 		['name' => 'Vacation#index', 'url' => '/api/v1/vacation', 'verb' => 'GET'],
 		['name' => 'Vacation#create', 'url' => '/api/v1/vacation', 'verb' => 'POST'],
-		['name' => 'Vacation#update', 'url' => '/api/v1/vacation', 'verb' => 'POST'],
-		['name' => 'Vacation#destroy', 'url' => '/api/v1/vacation', 'verb' => 'DELETE'],
+		['name' => 'Vacation#update', 'url' => '/api/v1/vacation', 'verb' => 'PUT'],
+		['name' => 'Vacation#destroy', 'url' => '/api/v1/vacation', 'verb' => 'DELETE']
 	],
 	'routes' => [
 		[
@@ -24,5 +24,7 @@ return [
 			'url' => '/',
 			'verb' => 'GET'
 		],
+		['name' => 'AdminSettings#update', 'url' => '/api/v1/admin-settings', 'verb' => 'POST'],
+
 	]
 ];

@@ -69,7 +69,6 @@ class Version000001Date20181013124731 extends SimpleMigrationStep {
 				'length' => 64
 			]);
 
-
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['user_id'], 'vacation_user_id_index');
 		}
