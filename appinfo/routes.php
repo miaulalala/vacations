@@ -18,4 +18,11 @@ return [
 		['name' => 'Vacation#update', 'url' => '/api/v1/vacation', 'verb' => 'POST'],
 		['name' => 'Vacation#destroy', 'url' => '/api/v1/vacation', 'verb' => 'DELETE'],
 	],
+	'routes' => [
+		[
+			'name' => 'Page#index',
+			'url' => '/',
+			'verb' => 'GET'
+		],
+	]
 ];
