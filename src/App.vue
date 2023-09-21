@@ -37,15 +37,22 @@
 		</AppNavigation>
 		<AppContent>
 			<form>
-				<NcDatetimePicker v-model="start"
+				<NcDateTimePickerNative id="start-date"
+					v-model="start"
+					label="Start Date"
 					type="date" />
-				<NcDatetimePicker v-model="end"
+				<NcDateTimePickerNative id="end-date"
+					v-model="end"
+					label="End Date"
 					type="date" />
 				<NcTextField :value.sync="days" label="Number of days" />
 				<NcTextField :value.sync="signature" label="Signature" />
-				<NcCheckboxRadioSwitch :checked.sync="signatureAccepted" />
-				<span>Signature accepted</span>
-				<NcButton @click="createVacation" />
+				<NcCheckboxRadioSwitch :checked.sync="signed">
+					I confirm that by typing my name I have signed this vacation request
+				</NcCheckboxRadioSwitch>
+				<NcButton title="Save" :disabled="!canSave" @click="createVacation">
+					Save
+				</NcButton>
 			</form>
 		</AppContent>
 	</div>
@@ -60,6 +67,7 @@ import {
 	NcAppNavigationNew as AppNavigationNew,
 	NcTextField,
 	NcDatetimePicker,
+	NcDateTimePickerNative,
 	NcCheckboxRadioSwitch,
 	NcButton,
 } from '@nextcloud/vue'
@@ -78,7 +86,7 @@ export default {
 		AppNavigation,
 		AppNavigationItem,
 		AppNavigationNew,
-		NcDatetimePicker,
+		NcDateTimePickerNative,
 		NcCheckboxRadioSwitch,
 		NcTextField,
 		NcButton,
@@ -91,10 +99,10 @@ export default {
 			loading: true,
 
 			start: new Date(),
-			end: null,
+			end: new Date(),
 			days: '0',
 			signature: '',
-			signatureAccepted: false,
+			signed: false,
 		}
 	},
 	computed: {
@@ -117,6 +125,10 @@ export default {
 		 */
 		savePossible() {
 			return this.currentNote && this.currentNote.title !== ''
+		},
+
+		canSave() {
+			return this.signed && this.signature !== '' && !isNaN(parseInt(this.days))
 		},
 	},
 	/**
@@ -141,7 +153,7 @@ export default {
 				end: formatDate(this.end),
 				dayCount: parseInt(this.days),
 				signature: this.signature,
-				signatureVerified: this.signatureAccepted,
+				signatureVerified: this.signed,
 			})
 		},
 		/**
@@ -267,4 +279,4 @@ export default {
 		flex-grow: 1;
 		width: 100%;
 	}
-</stylel>
+</style>

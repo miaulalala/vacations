@@ -21,10 +21,11 @@
  */
 
 /**
- *
  * @param {Date} date
  * @return {string}
  */
 export function formatDate(date) {
-	return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`
+	const month = (date.getMonth() + 1).toString().padStart(2, '0')
+	const day = date.getDay().toString().padStart(2, '0')
+	return `${date.getFullYear()}-${month}-${day}`
 }
