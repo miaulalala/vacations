@@ -9,8 +9,8 @@ use OCP\AppFramework\App;
 use OCP\IRequest;
 use PHPUnit\Framework\TestCase;
 
-use OCA\Vacation\Db\Note;
-use OCA\Vacation\Db\NoteMapper;
+use OCA\Vacation\Db\Vacation;
+use OCA\Vacation\Db\VacationMapper;
 use OCA\Vacation\Controller\NoteController;
 
 class NoteIntegrationTest extends TestCase {
@@ -33,12 +33,12 @@ class NoteIntegrationTest extends TestCase {
 		});
 
 		$this->controller = $container->get(NoteController::class);
-		$this->mapper = $container->get(NoteMapper::class);
+		$this->mapper = $container->get(VacationMapper::class);
 	}
 
 	public function testUpdate(): void {
 		// create a new note that should be updated
-		$note = new Note();
+		$note = new Vacation();
 		$note->setTitle('old_title');
 		$note->setContent('old_content');
 		$note->setUserId($this->userId);
@@ -46,7 +46,7 @@ class NoteIntegrationTest extends TestCase {
 		$id = $this->mapper->insert($note)->getId();
 
 		// fromRow does not set the fields as updated
-		$updatedNote = Note::fromRow([
+		$updatedNote = Vacation::fromRow([
 			'id' => $id,
 			'user_id' => $this->userId
 		]);

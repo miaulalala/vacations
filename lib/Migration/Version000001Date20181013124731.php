@@ -52,11 +52,16 @@ class Version000001Date20181013124731 extends SimpleMigrationStep {
 				'notnull' => false,
 				'default' => false,
 			]);
+			$table->addColumn('signoff_user_id', Types::STRING, [
+				'notnull' => false,
+				'length' => 255,
+				'default' => null
+			]);
 			$table->addColumn('status', Types::SMALLINT, [
 				'notnull' => true,
 			]);
 			$table->addColumn('status_message', Types::TEXT, [
-				'notnull' => true,
+				'notnull' => false,
 			]);
 			$table->addColumn('token', Types::STRING, [
 				'notnull' => false,
