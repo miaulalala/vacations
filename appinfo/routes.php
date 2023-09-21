@@ -12,13 +12,10 @@ declare(strict_types=1);
  * it's instantiated in there
  */
 return [
-	'resources' => [
-		'note' => ['url' => '/notes'],
-		'note_api' => ['url' => '/api/0.1/notes']
+	'ocs' => [
+		['name' => 'Vacation#index', 'url' => '/api/v1/vacation', 'verb' => 'GET'],
+		['name' => 'Vacation#create', 'url' => '/api/v1/vacation', 'verb' => 'POST'],
+		['name' => 'Vacation#update', 'url' => '/api/v1/vacation', 'verb' => 'POST'],
+		['name' => 'Vacation#destroy', 'url' => '/api/v1/vacation', 'verb' => 'DELETE'],
 	],
-	'routes' => [
-		['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
-		['name' => 'note_api#preflighted_cors', 'url' => '/api/0.1/{path}',
-			'verb' => 'OPTIONS', 'requirements' => ['path' => '.+']]
-	]
 ];
