@@ -27,6 +27,7 @@ use OCP\AppFramework\Db\Entity;
  * @method getSignoffUserId(): string;
  * @method setSignoffUserId(string $signoffUserId): void;
  * @method getStatus(): int;
+ * @method setStatus(int $status): void;
  * @method getStatusMessage(): string;
  * @method setStatusMessage(string $statusMessage): void;
  * @method getToken(): string;
@@ -37,16 +38,30 @@ class Vacation extends Entity implements JsonSerializable {
 	public CONST VACATION_PENDING = 0;
 	public CONST VACATION_ACCEPTED = 1;
 	public CONST VACATION_DECLINED = 2;
-	protected string $userId;
-	protected string $start;
-	protected string $end;
-	protected int $dayCount;
-	protected string $signature;
-	protected bool $signatureVerified;
-	protected string $signoffUserId;
-	protected int $status;
-	protected string $statusMessage;
-	protected string $token;
+	protected string $userId = '';
+	protected string $start = '';
+	protected string $end = '';
+	protected int $dayCount = 0;
+	protected string $signature = '';
+	protected bool $signatureVerified = false;
+	protected string $signoffUserId = '';
+	protected int $status = 0;
+	protected string $statusMessage = '';
+	protected string $token = '';
+
+	public function __construct() {
+		$this->addType('user_id', 'string');
+		$this->addType('start', 'string');
+		$this->addType('end', 'string');
+		$this->addType('day_dount', 'integer');
+		$this->addType('signature', 'string');
+		$this->addType('signature_verified', 'boolean');
+		$this->addType('signoff_user_id', 'string');
+		$this->addType('status', 'integer');
+		$this->addType('status_message', 'string');
+		$this->addType('token', 'string');
+
+	}
 
 	public function jsonSerialize(): array {
 		return [
@@ -62,11 +77,5 @@ class Vacation extends Entity implements JsonSerializable {
 			'statusMessage' => $this->statusMessage,
 			'token' => $this->token,
 		];
-	}
-
-	public function setStatus(int $status): void {
-		if(in_array($status, [self::VACATION_ACCEPTED, self::VACATION_DECLINED, self::VACATION_PENDING])) {
-			$this->status = $status;
-		}
 	}
 }
