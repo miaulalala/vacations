@@ -22,6 +22,7 @@
         <navigation>
             <name>Vacation</name>
             <route>vacation.page.index</route>
+			<icon>vacation.svg</icon>
         </navigation>
     </navigations>
 </info>
