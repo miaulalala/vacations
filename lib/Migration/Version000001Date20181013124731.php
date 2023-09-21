@@ -60,7 +60,7 @@ class Version000001Date20181013124731 extends SimpleMigrationStep {
 			]);
 			$table->addColumn('token', Types::STRING, [
 				'notnull' => false,
-				'lenght' => 64
+				'length' => 64
 			]);
 
 
