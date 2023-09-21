@@ -37,6 +37,7 @@ use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\LDAP\ILDAPProvider;
 use OCP\Settings\ISettings;
+use OCP\Util;
 
 class AdminSettings implements ISettings {
 
@@ -44,11 +45,12 @@ class AdminSettings implements ISettings {
 	}
 
 	public function getForm() {
+		Util::addScript(\OCA\Vacation\AppInfo\Application::APP_ID, 'vacation-admin_settings');
 		$this->initialStateService->provideInitialState(
 			'vacation_email',
 			$this->config->getAppValue(Application::APP_ID, 'vacation_email')
 		);
-		return new TemplateResponse(Application::APP_ID, 'settings-admin');
+		return new TemplateResponse(Application::APP_ID, 'main');
 	}
 
 	public function getSection() {
