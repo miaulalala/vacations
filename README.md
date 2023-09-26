@@ -3,8 +3,27 @@ SPDX-FileCopyrightText: Anna Larch <anna.larch@gmx.net>
 SPDX-License-Identifier: CC0-1.0
 -->
 
-# Vacation
-Place this app in **nextcloud/apps/**
+# 🌴 Vacation Requests
+
+Make vacation requests directly from Nextcloud!
+
+Still a **Work in Progress.**
+
+The planned feature set is:
+
+- Send vacation requests directly from NC
+
+- Keep track of bookings for users - List view for all past bookings and their approval status, amount of days taken counter
+
+- Use new "Manager" property to notify managers of vacation requests - fallback email can be set by admins
+
+- Keep track of approving manager via user_id
+
+- Overview for managers of their teams' holidays
+
+- Automated status via Calendar/DAV - dedicated vacation calendar can be defined by admins; VEVENT will contain holiday- taker as ATTENDEE with BUSY status 
+
+- Possiblity for integration with OoO- Sieve integration, etc.
 
 ## Building the app
 
