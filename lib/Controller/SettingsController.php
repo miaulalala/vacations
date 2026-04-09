@@ -51,13 +51,20 @@ class SettingsController extends Controller {
 	}
 
 	/**
-	 * Sets the email settings for the fallback vacation email
-	 *
-	 * @param string $email
-	 * @return DataResponse
+	 * Saves admin settings
 	 */
-	public function update(string $email) {
+	public function update(
+		string $email = '',
+		int $minStartDays = 0,
+		int $maxEndDays = 0,
+	): DataResponse {
 		$this->config->setAppValue(Application::APP_ID, 'vacation_email', $email);
-		return new DataResponse([$email]);
+		$this->config->setAppValue(Application::APP_ID, 'min_start_days', (string)$minStartDays);
+		$this->config->setAppValue(Application::APP_ID, 'max_end_days', (string)$maxEndDays);
+		return new DataResponse([
+			'email' => $email,
+			'minStartDays' => $minStartDays,
+			'maxEndDays' => $maxEndDays,
+		]);
 	}
 }
