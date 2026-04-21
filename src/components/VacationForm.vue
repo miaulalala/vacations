@@ -11,7 +11,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 			<p v-if="minStartDays > 0" class="vacation-form__info">
 				{{ t('vacation', 'Start date must be at least {days} days in the future', { days: minStartDays }) }}
 			</p>
-			<NcDateTimePickerNative id="start-date"
+			<NcDateTimePickerNative
+				id="start-date"
 				v-model="start"
 				:label="t('vacation', 'Start date')"
 				:min="minStartDate"
@@ -19,7 +20,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		</div>
 
 		<div class="vacation-form__field">
-			<NcDateTimePickerNative id="end-date"
+			<NcDateTimePickerNative
+				id="end-date"
 				v-model="end"
 				:label="t('vacation', 'End date')"
 				:min="minEndDate"
@@ -36,14 +38,16 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		</div>
 
 		<div class="vacation-form__field">
-			<NcTextField v-model="days"
+			<NcTextField
+				v-model="days"
 				:label="t('vacation', 'Number of vacation days')"
 				type="number" />
 		</div>
 
 		<div class="vacation-form__field">
 			<label>{{ t('vacation', 'Replacement') }}</label>
-			<NcSelectUsers v-model="replacement"
+			<NcSelectUsers
+				v-model="replacement"
 				:options="replacementOptions"
 				:placeholder="t('vacation', 'Search for a replacement…')"
 				@search="searchReplacement">
@@ -55,7 +59,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 		<div class="vacation-form__field">
 			<label>{{ t('vacation', 'Manager') }}</label>
-			<NcSelectUsers v-model="manager"
+			<NcSelectUsers
+				v-model="manager"
 				:options="managerOptions"
 				:placeholder="t('vacation', 'Search for your manager…')"
 				@search="searchManager">
@@ -66,25 +71,29 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		</div>
 
 		<div class="vacation-form__field">
-			<NcTextArea v-model="message"
+			<NcTextArea
+				v-model="message"
 				:label="t('vacation', 'Message (optional)')"
 				resize="vertical" />
 		</div>
 
 		<div class="vacation-form__field">
-			<NcTextField v-model="signature"
+			<NcTextField
+				v-model="signature"
 				:label="t('vacation', 'Signature (type your full name)')" />
 		</div>
 
 		<div class="vacation-form__field">
-			<NcCheckboxRadioSwitch :model-value="signed"
+			<NcCheckboxRadioSwitch
+				:model-value="signed"
 				type="switch"
 				@update:model-value="signed = $event">
 				{{ t('vacation', 'I confirm that by typing my name I have signed this vacation request') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 
-		<NcButton type="primary"
+		<NcButton
+			variant="primary"
 			:disabled="!canSubmit || submitting"
 			@click="submit">
 			{{ submitting ? t('vacation', 'Submitting…') : t('vacation', 'Submit request') }}
@@ -93,7 +102,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { getCurrentUser } from '@nextcloud/auth'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import {
 	NcButton,
@@ -102,14 +112,11 @@ import {
 	NcTextArea,
 	NcTextField,
 } from '@nextcloud/vue'
+import { computed, ref, watch } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { getCurrentUser } from '@nextcloud/auth'
 import { createVacation, searchUsers } from '../api.js'
 import { formatDate } from '../date.js'
-
-const emit = defineEmits(['created'])
 
 const props = defineProps({
 	presetManager: {
@@ -126,6 +133,13 @@ const props = defineProps({
 	},
 })
 
+const emit = defineEmits(['created'])
+
+/**
+ *
+ * @param date
+ * @param numDays
+ */
 function addDays(date, numDays) {
 	const d = new Date(date)
 	d.setHours(0, 0, 0, 0)
@@ -133,6 +147,9 @@ function addDays(date, numDays) {
 	return d
 }
 
+/**
+ *
+ */
 function firstValidStart() {
 	if (props.minStartDays > 0) {
 		return addDays(new Date(), props.minStartDays)
@@ -150,6 +167,10 @@ const signature = ref('')
 const signed = ref(false)
 const submitting = ref(false)
 
+/**
+ *
+ * @param user
+ */
 function toSelectOption(user) {
 	return {
 		id: user.id,
@@ -203,7 +224,7 @@ const minEndDate = computed(() => {
 		candidates.push(minStartDate.value)
 	}
 	candidates.push(start.value)
-	return new Date(Math.max(...candidates.map(d => d.getTime())))
+	return new Date(Math.max(...candidates.map((d) => d.getTime())))
 })
 
 watch(start, (newStart) => {
@@ -213,13 +234,13 @@ watch(start, (newStart) => {
 })
 
 const startDateValid = computed(() => {
-	if (!minStartDate.value) return true
+	if (!minStartDate.value) { return true }
 	return start.value >= minStartDate.value
 })
 
 const endDateValid = computed(() => {
-	if (end.value < start.value) return false
-	if (!maxEndDate.value) return true
+	if (end.value < start.value) { return false }
+	if (!maxEndDate.value) { return true }
 	return end.value <= maxEndDate.value
 })
 
@@ -233,6 +254,10 @@ const canSubmit = computed(() => {
 		&& endDateValid.value
 })
 
+/**
+ *
+ * @param query
+ */
 async function searchReplacement(query) {
 	clearTimeout(searchTimeout)
 	if (query.length < 2) {
@@ -243,13 +268,17 @@ async function searchReplacement(query) {
 		try {
 			const users = await searchUsers(query)
 			const currentUid = getCurrentUser()?.uid
-			replacementOptions.value = users.filter(u => u.id !== currentUid).map(toSelectOption)
+			replacementOptions.value = users.filter((u) => u.id !== currentUid).map(toSelectOption)
 		} catch (e) {
 			console.error(e)
 		}
 	}, 300)
 }
 
+/**
+ *
+ * @param query
+ */
 async function searchManager(query) {
 	clearTimeout(searchTimeout)
 	if (query.length < 2) {
@@ -266,6 +295,9 @@ async function searchManager(query) {
 	}, 300)
 }
 
+/**
+ *
+ */
 async function submit() {
 	submitting.value = true
 	try {

@@ -27,23 +27,24 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 			</div>
 
 			<div v-if="actionId === vacation.id" class="approval-card__message">
-				<NcTextField v-model="statusMessage"
+				<NcTextField
+					v-model="statusMessage"
 					:label="t('vacation', 'Message (optional)')" />
 				<div class="approval-card__message-actions">
 					<NcButton :variant="actionType === 'approve' ? 'success' : 'error'" @click="confirmAction(vacation.id)">
 						{{ actionType === 'approve' ? t('vacation', 'Approve') : t('vacation', 'Decline') }}
 					</NcButton>
-					<NcButton type="tertiary" @click="cancelAction">
+					<NcButton variant="tertiary" @click="cancelAction">
 						{{ t('vacation', 'Cancel') }}
 					</NcButton>
 				</div>
 			</div>
 
 			<div v-else class="approval-card__actions">
-				<NcButton type="success" @click="startApprove(vacation.id)">
+				<NcButton variant="success" @click="startApprove(vacation.id)">
 					{{ t('vacation', 'Approve') }}
 				</NcButton>
-				<NcButton type="error" @click="startDecline(vacation.id)">
+				<NcButton variant="error" @click="startDecline(vacation.id)">
 					{{ t('vacation', 'Decline') }}
 				</NcButton>
 			</div>
@@ -52,13 +53,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { NcButton, NcTextField } from '@nextcloud/vue'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { ref } from 'vue'
 import { approveVacation, declineVacation } from '../api.js'
-
-const emit = defineEmits(['updated'])
 
 defineProps({
 	vacations: {
@@ -67,28 +66,45 @@ defineProps({
 	},
 })
 
+const emit = defineEmits(['updated'])
+
 const actionId = ref(null)
 const actionType = ref(null)
 const statusMessage = ref('')
 
+/**
+ *
+ * @param id
+ */
 function startApprove(id) {
 	actionId.value = id
 	actionType.value = 'approve'
 	statusMessage.value = ''
 }
 
+/**
+ *
+ * @param id
+ */
 function startDecline(id) {
 	actionId.value = id
 	actionType.value = 'decline'
 	statusMessage.value = ''
 }
 
+/**
+ *
+ */
 function cancelAction() {
 	actionId.value = null
 	actionType.value = null
 	statusMessage.value = ''
 }
 
+/**
+ *
+ * @param id
+ */
 async function confirmAction(id) {
 	try {
 		if (actionType.value === 'approve') {

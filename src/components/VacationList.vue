@@ -36,8 +36,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 					<td>{{ vacation.message }}</td>
 					<td>{{ vacation.statusMessage }}</td>
 					<td>
-						<NcButton v-if="vacation.status === VACATION_PENDING"
-							type="tertiary-no-background"
+						<NcButton
+							v-if="vacation.status === VACATION_PENDING"
+							variant="tertiary-no-background"
 							@click="$emit('delete', vacation.id)">
 							{{ t('vacation', 'Delete') }}
 						</NcButton>
@@ -51,7 +52,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 <script setup>
 import { t } from '@nextcloud/l10n'
 import { NcButton } from '@nextcloud/vue'
-import { VACATION_PENDING, VACATION_ACCEPTED, VACATION_DECLINED } from '../constants.js'
+import { VACATION_ACCEPTED, VACATION_DECLINED, VACATION_PENDING } from '../constants.js'
 
 defineProps({
 	vacations: {
@@ -62,29 +63,37 @@ defineProps({
 
 defineEmits(['delete'])
 
+/**
+ *
+ * @param status
+ */
 function statusLabel(status) {
 	switch (status) {
-	case VACATION_PENDING:
-		return t('vacation', 'Pending')
-	case VACATION_ACCEPTED:
-		return t('vacation', 'Approved')
-	case VACATION_DECLINED:
-		return t('vacation', 'Declined')
-	default:
-		return t('vacation', 'Unknown')
+		case VACATION_PENDING:
+			return t('vacation', 'Pending')
+		case VACATION_ACCEPTED:
+			return t('vacation', 'Approved')
+		case VACATION_DECLINED:
+			return t('vacation', 'Declined')
+		default:
+			return t('vacation', 'Unknown')
 	}
 }
 
+/**
+ *
+ * @param status
+ */
 function statusClass(status) {
 	switch (status) {
-	case VACATION_PENDING:
-		return 'status--pending'
-	case VACATION_ACCEPTED:
-		return 'status--approved'
-	case VACATION_DECLINED:
-		return 'status--declined'
-	default:
-		return ''
+		case VACATION_PENDING:
+			return 'status--pending'
+		case VACATION_ACCEPTED:
+			return 'status--approved'
+		case VACATION_DECLINED:
+			return 'status--declined'
+		default:
+			return ''
 	}
 }
 </script>
@@ -108,7 +117,7 @@ function statusClass(status) {
 .vacation-list__table th,
 .vacation-list__table td {
 	padding: 8px 12px;
-	text-align: left;
+	text-align: start;
 	border-bottom: 1px solid var(--color-border);
 }
 

@@ -4,9 +4,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <template>
-	<NcContent appName="vacation">
+	<NcContent app-name="vacation">
 		<NcAppNavigation>
-			<NcAppNavigationItem class="navigation-item"
+			<NcAppNavigationItem
+				class="navigation-item"
 				:name="t('vacation', 'New Request')"
 				:active="activeTab === 'new'"
 				@click="activeTab = 'new'">
@@ -14,7 +15,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 					<NcIconSvgWrapper :path="mdiUmbrellaBeachOutline" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem class="navigation-item"
+			<NcAppNavigationItem
+				class="navigation-item"
 				:name="t('vacation', 'My Requests')"
 				:active="activeTab === 'requests'"
 				@click="activeTab = 'requests'">
@@ -22,7 +24,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 					<NcIconSvgWrapper :path="mdiFormatListBulleted" />
 				</template>
 			</NcAppNavigationItem>
-			<NcAppNavigationItem v-if="pendingApprovals.length > 0"
+			<NcAppNavigationItem
+				v-if="pendingApprovals.length > 0"
 				class="navigation-item"
 				:name="t('vacation', 'Pending Approvals')"
 				:active="activeTab === 'approvals'"
@@ -38,7 +41,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 		<NcAppContent>
 			<div v-if="activeTab === 'new'" class="vacation-tab">
-				<VacationForm v-if="managerLoaded"
+				<VacationForm
+					v-if="managerLoaded"
 					:preset-manager="currentManager"
 					:min-start-days="appConfig.minStartDays"
 					:max-end-days="appConfig.maxEndDays"
@@ -46,12 +50,14 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 			</div>
 
 			<div v-if="activeTab === 'requests'" class="vacation-tab">
-				<VacationList :vacations="myVacations"
+				<VacationList
+					:vacations="myVacations"
 					@delete="onDeleteVacation" />
 			</div>
 
 			<div v-if="activeTab === 'approvals'" class="vacation-tab">
-				<ApprovalList :vacations="pendingApprovals"
+				<ApprovalList
+					:vacations="pendingApprovals"
 					@updated="loadPendingApprovals" />
 			</div>
 		</NcAppContent>
@@ -59,7 +65,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { mdiClipboardCheckOutline, mdiFormatListBulleted, mdiUmbrellaBeachOutline } from '@mdi/js'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import {
 	NcAppContent,
@@ -68,18 +75,17 @@ import {
 	NcContent,
 	NcCounterBubble,
 } from '@nextcloud/vue'
+import { onMounted, ref } from 'vue'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { mdiUmbrellaBeachOutline, mdiFormatListBulleted, mdiClipboardCheckOutline } from '@mdi/js'
+import ApprovalList from './components/ApprovalList.vue'
 import VacationForm from './components/VacationForm.vue'
 import VacationList from './components/VacationList.vue'
-import ApprovalList from './components/ApprovalList.vue'
 import {
+	deleteVacation,
+	fetchConfig,
+	fetchCurrentUserManager,
 	fetchMyVacations,
 	fetchPendingApprovals as fetchPending,
-	fetchCurrentUserManager,
-	fetchConfig,
-	deleteVacation,
 } from './api.js'
 
 const activeTab = ref('new')
@@ -89,6 +95,9 @@ const currentManager = ref(null)
 const managerLoaded = ref(false)
 const appConfig = ref({ minStartDays: 0, maxEndDays: 0 })
 
+/**
+ *
+ */
 async function loadMyVacations() {
 	try {
 		myVacations.value = await fetchMyVacations()
@@ -98,6 +107,9 @@ async function loadMyVacations() {
 	}
 }
 
+/**
+ *
+ */
 async function loadPendingApprovals() {
 	try {
 		pendingApprovals.value = await fetchPending()
@@ -106,6 +118,9 @@ async function loadPendingApprovals() {
 	}
 }
 
+/**
+ *
+ */
 async function loadCurrentManager() {
 	try {
 		currentManager.value = await fetchCurrentUserManager()
@@ -115,6 +130,9 @@ async function loadCurrentManager() {
 	managerLoaded.value = true
 }
 
+/**
+ *
+ */
 async function loadConfig() {
 	try {
 		appConfig.value = await fetchConfig()
@@ -123,10 +141,17 @@ async function loadConfig() {
 	}
 }
 
+/**
+ *
+ */
 async function onVacationCreated() {
 	await loadMyVacations()
 }
 
+/**
+ *
+ * @param id
+ */
 async function onDeleteVacation(id) {
 	try {
 		await deleteVacation(id)
