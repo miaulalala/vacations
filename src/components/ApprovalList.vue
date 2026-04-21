@@ -53,11 +53,17 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 </template>
 
 <script setup>
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showSuccess, showWarning } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { NcButton, NcTextField } from '@nextcloud/vue'
 import { ref } from 'vue'
 import { approveVacation, declineVacation } from '../api.js'
+
+const warningMessages = {
+	notification: t('vacation', 'The requester could not be notified'),
+	calendar: t('vacation', 'The calendar event could not be created'),
+	absence: t('vacation', 'The out-of-office status could not be set'),
+}
 
 defineProps({
 	vacations: {
@@ -107,13 +113,18 @@ function cancelAction() {
  */
 async function confirmAction(id) {
 	try {
-		if (actionType.value === 'approve') {
-			await approveVacation(id, statusMessage.value)
-			showSuccess(t('vacation', 'Vacation request approved'))
-		} else {
-			await declineVacation(id, statusMessage.value)
-			showSuccess(t('vacation', 'Vacation request declined'))
+		const result = actionType.value === 'approve'
+			? await approveVacation(id, statusMessage.value)
+			: await declineVacation(id, statusMessage.value)
+		const successMessage = actionType.value === 'approve'
+			? t('vacation', 'Vacation request approved')
+			: t('vacation', 'Vacation request declined')
+		showSuccess(successMessage)
+
+		for (const key of result?.warnings ?? []) {
+			showWarning(warningMessages[key] ?? key)
 		}
+
 		cancelAction()
 		emit('updated')
 	} catch (e) {
@@ -123,15 +134,15 @@ async function confirmAction(id) {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .approval-list {
 	padding: 20px;
 	padding-top: 50px;
-}
 
-.approval-list__empty {
-	color: var(--color-text-maxcontrast);
-	padding: 20px 0;
+	&__empty {
+		color: var(--color-text-maxcontrast);
+		padding: 20px 0;
+	}
 }
 
 .approval-card {
@@ -139,33 +150,33 @@ async function confirmAction(id) {
 	border-radius: var(--border-radius-large);
 	padding: 16px;
 	margin-bottom: 12px;
-}
 
-.approval-card__header {
-	font-size: 1.1em;
-	margin-bottom: 8px;
-}
+	&__header {
+		font-size: 1.1em;
+		margin-bottom: 8px;
+	}
 
-.approval-card__details {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	margin-bottom: 12px;
-	color: var(--color-text-maxcontrast);
-}
+	&__details {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		margin-bottom: 12px;
+		color: var(--color-text-maxcontrast);
+	}
 
-.approval-card__actions {
-	display: flex;
-	gap: 8px;
-}
+	&__actions {
+		display: flex;
+		gap: 8px;
+	}
 
-.approval-card__message {
-	margin-top: 8px;
-}
+	&__message {
+		margin-top: 8px;
+	}
 
-.approval-card__message-actions {
-	display: flex;
-	gap: 8px;
-	margin-top: 8px;
+	&__message-actions {
+		display: flex;
+		gap: 8px;
+		margin-top: 8px;
+	}
 }
 </style>

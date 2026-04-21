@@ -18,11 +18,19 @@ class NotificationService {
 	) {
 	}
 
+	/**
+	 * @throws NotificationRecipientNotFound
+	 */
 	public function notifyManager(Vacation $vacation): void {
+		$managerUserId = $vacation->getManagerUserId();
+		if ($managerUserId === '') {
+			throw new NotificationRecipientNotFound('Vacation request has no manager set');
+		}
+
 		$notification = $this->notificationManager->createNotification();
 		$notification
 			->setApp(Application::APP_ID)
-			->setUser($vacation->getManagerUserId())
+			->setUser($managerUserId)
 			->setObject('vacation', (string)$vacation->getId())
 			->setSubject('new_request', [
 				'userId' => $vacation->getUserId(),
@@ -35,7 +43,15 @@ class NotificationService {
 		$this->notificationManager->notify($notification);
 	}
 
+	/**
+	 * @throws NotificationRecipientNotFound
+	 */
 	public function notifyRequester(Vacation $vacation): void {
+		$userId = $vacation->getUserId();
+		if ($userId === '') {
+			throw new NotificationRecipientNotFound('Vacation request has no requester set');
+		}
+
 		$subject = $vacation->getStatus() === Vacation::VACATION_ACCEPTED
 			? 'request_approved'
 			: 'request_declined';
@@ -43,7 +59,7 @@ class NotificationService {
 		$notification = $this->notificationManager->createNotification();
 		$notification
 			->setApp(Application::APP_ID)
-			->setUser($vacation->getUserId())
+			->setUser($userId)
 			->setObject('vacation', (string)$vacation->getId())
 			->setSubject($subject, [
 				'managerUserId' => $vacation->getManagerUserId(),

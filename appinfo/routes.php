@@ -16,10 +16,10 @@ return [
 		['name' => 'Vacation#destroy', 'url' => '/api/v1/vacation/{id}', 'verb' => 'DELETE'],
 		['name' => 'Vacation#users', 'url' => '/api/v1/users', 'verb' => 'GET'],
 		['name' => 'Vacation#currentUserManager', 'url' => '/api/v1/manager', 'verb' => 'GET'],
-		['name' => 'Vacation#config', 'url' => '/api/v1/config', 'verb' => 'GET'],
+		['name' => 'Settings#index', 'url' => '/api/v1/settings', 'verb' => 'GET'],
+		['name' => 'Settings#update', 'url' => '/api/v1/settings', 'verb' => 'POST'],
 	],
 	'routes' => [
 		['name' => 'Page#index', 'url' => '/', 'verb' => 'GET'],
-		['name' => 'Settings#update', 'url' => '/api/v1/admin-settings', 'verb' => 'POST'],
 	],
 ];

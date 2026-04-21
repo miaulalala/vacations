@@ -111,10 +111,9 @@ import {
 	NcDateTimePickerNative,
 	NcTextArea,
 	NcTextField,
+	NcSelectUsers,
 } from '@nextcloud/vue'
 import { computed, ref, watch } from 'vue'
-import NcAvatar from '@nextcloud/vue/components/NcAvatar'
-import NcSelectUsers from '@nextcloud/vue/components/NcSelectUsers'
 import { createVacation, searchUsers } from '../api.js'
 import { formatDate } from '../date.js'
 
@@ -184,7 +183,8 @@ const manager = ref(props.presetManager ? toSelectOption(props.presetManager) : 
 const replacementOptions = ref([])
 const managerOptions = ref([])
 
-let searchTimeout = null
+let replacementSearchTimeout = null
+let managerSearchTimeout = null
 
 // Pre-select manager when prop arrives asynchronously
 watch(() => props.presetManager, (newManager) => {
@@ -259,12 +259,12 @@ const canSubmit = computed(() => {
  * @param query
  */
 async function searchReplacement(query) {
-	clearTimeout(searchTimeout)
+	clearTimeout(replacementSearchTimeout)
 	if (query.length < 2) {
 		replacementOptions.value = []
 		return
 	}
-	searchTimeout = setTimeout(async () => {
+	replacementSearchTimeout = setTimeout(async () => {
 		try {
 			const users = await searchUsers(query)
 			const currentUid = getCurrentUser()?.uid
@@ -280,12 +280,12 @@ async function searchReplacement(query) {
  * @param query
  */
 async function searchManager(query) {
-	clearTimeout(searchTimeout)
+	clearTimeout(managerSearchTimeout)
 	if (query.length < 2) {
 		managerOptions.value = []
 		return
 	}
-	searchTimeout = setTimeout(async () => {
+	managerSearchTimeout = setTimeout(async () => {
 		try {
 			const users = await searchUsers(query)
 			managerOptions.value = users.map(toSelectOption)
@@ -335,39 +335,39 @@ async function submit() {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .vacation-form {
 	max-width: 600px;
 	padding: 20px;
 	padding-top: 50px;
-}
 
-.vacation-form__field {
-	margin-bottom: 16px;
-}
+	&__field {
+		margin-bottom: 16px;
 
-.vacation-form__field label {
-	display: block;
-	margin-bottom: 4px;
-	font-weight: bold;
-}
+		label {
+			display: block;
+			margin-bottom: 4px;
+			font-weight: bold;
+		}
+	}
 
-.vacation-form__hint {
-	color: var(--color-error-text);
-	font-size: 0.9em;
-	margin-top: 4px;
-}
+	&__hint {
+		color: var(--color-error-text);
+		font-size: 0.9em;
+		margin-top: 4px;
+	}
 
-.vacation-form__info {
-	color: var(--color-text-maxcontrast);
-	font-size: 0.9em;
-	margin-bottom: 4px;
-}
+	&__info {
+		color: var(--color-text-maxcontrast);
+		font-size: 0.9em;
+		margin-bottom: 4px;
+	}
 
-.vacation-form__user-chip {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 0;
+	&__user-chip {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 0;
+	}
 }
 </style>

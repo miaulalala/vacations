@@ -98,46 +98,48 @@ function statusClass(status) {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .vacation-list {
 	padding: 20px;
 	padding-top: 50px;
+
+	&__empty {
+		color: var(--color-text-maxcontrast);
+		padding: 20px 0;
+	}
+
+	&__table {
+		width: 100%;
+		border-collapse: collapse;
+
+		th,
+		td {
+			padding: 8px 12px;
+			text-align: start;
+			border-bottom: 1px solid var(--color-border);
+		}
+
+		th {
+			font-weight: bold;
+			color: var(--color-text-maxcontrast);
+		}
+	}
 }
 
-.vacation-list__empty {
-	color: var(--color-text-maxcontrast);
-	padding: 20px 0;
-}
+.status {
+	&--pending {
+		color: var(--color-warning-text);
+		font-weight: bold;
+	}
 
-.vacation-list__table {
-	width: 100%;
-	border-collapse: collapse;
-}
+	&--approved {
+		color: var(--color-success-text);
+		font-weight: bold;
+	}
 
-.vacation-list__table th,
-.vacation-list__table td {
-	padding: 8px 12px;
-	text-align: start;
-	border-bottom: 1px solid var(--color-border);
-}
-
-.vacation-list__table th {
-	font-weight: bold;
-	color: var(--color-text-maxcontrast);
-}
-
-.status--pending {
-	color: var(--color-warning-text);
-	font-weight: bold;
-}
-
-.status--approved {
-	color: var(--color-success-text);
-	font-weight: bold;
-}
-
-.status--declined {
-	color: var(--color-error-text);
-	font-weight: bold;
+	&--declined {
+		color: var(--color-error-text);
+		font-weight: bold;
+	}
 }
 </style>

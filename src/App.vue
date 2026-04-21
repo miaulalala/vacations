@@ -173,7 +173,7 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .vacation-tab {
 	height: 100%;
 	overflow-y: auto;
@@ -182,14 +182,14 @@ onMounted(async () => {
 .navigation-item {
 	padding-inline: calc(var(--default-grid-baseline) * 2);
 	margin-block: var(--default-grid-baseline);
-}
 
-.navigation-item :deep(.app-navigation-entry-link) {
-	padding-inline-start: var(--default-grid-baseline);
-}
+	:deep(.app-navigation-entry-link) {
+		padding-inline-start: var(--default-grid-baseline);
+	}
 
-.navigation-item :deep(.app-navigation-entry__name) {
-	padding-inline-start: calc(2 * var(--default-grid-baseline));
-	font-weight: 500;
+	:deep(.app-navigation-entry__name) {
+		padding-inline-start: calc(2 * var(--default-grid-baseline));
+		font-weight: 500;
+	}
 }
 </style>

@@ -10,22 +10,22 @@ namespace OCA\Vacation\Service;
 use OCA\DAV\Service\AbsenceService;
 use OCA\Vacation\Db\Vacation;
 use OCP\IUserManager;
-use Psr\Log\LoggerInterface;
 
 class AbsenceIntegrationService {
 
 	public function __construct(
 		private AbsenceService $absenceService,
 		private IUserManager $userManager,
-		private LoggerInterface $logger,
 	) {
 	}
 
+	/**
+	 * @throws AbsenceNotSet
+	 */
 	public function setAbsence(Vacation $vacation): void {
 		$user = $this->userManager->get($vacation->getUserId());
 		if ($user === null) {
-			$this->logger->warning('Could not find user for absence: ' . $vacation->getUserId());
-			return;
+			throw new AbsenceNotSet('Could not find user for absence: ' . $vacation->getUserId());
 		}
 
 		$replacementUserId = $vacation->getReplacementUserId();

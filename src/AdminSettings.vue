@@ -56,7 +56,7 @@ import axios from '@nextcloud/axios'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import { NcButton, NcTextField } from '@nextcloud/vue'
 import { ref } from 'vue'
 import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
@@ -70,14 +70,21 @@ const savingDates = ref(false)
 /**
  *
  */
+async function saveSettings() {
+	await axios.post(generateOcsUrl('/apps/vacation/api/v1/settings'), {
+		email: email.value,
+		minStartDays: parseInt(minStartDays.value) || 0,
+		maxEndDays: parseInt(maxEndDays.value) || 0,
+	})
+}
+
+/**
+ *
+ */
 async function saveEmail() {
 	savingEmail.value = true
 	try {
-		await axios.post(generateUrl('/apps/vacation/api/v1/admin-settings'), {
-			email: email.value,
-			minStartDays: parseInt(minStartDays.value) || 0,
-			maxEndDays: parseInt(maxEndDays.value) || 0,
-		})
+		await saveSettings()
 		showSuccess(t('vacation', 'Settings saved'))
 	} catch (e) {
 		console.error(e)
@@ -92,11 +99,7 @@ async function saveEmail() {
 async function saveDates() {
 	savingDates.value = true
 	try {
-		await axios.post(generateUrl('/apps/vacation/api/v1/admin-settings'), {
-			email: email.value,
-			minStartDays: parseInt(minStartDays.value) || 0,
-			maxEndDays: parseInt(maxEndDays.value) || 0,
-		})
+		await saveSettings()
 		showSuccess(t('vacation', 'Settings saved'))
 	} catch (e) {
 		console.error(e)

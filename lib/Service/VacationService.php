@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace OCA\Vacation\Service;
 
-use Exception;
 use OCA\Vacation\Db\Vacation;
 use OCA\Vacation\Db\VacationMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -74,6 +73,7 @@ class VacationService {
 
 	/**
 	 * @throws VacationNotFound
+	 * @throws VacationNotPending
 	 */
 	public function update(
 		int $id,
@@ -88,21 +88,21 @@ class VacationService {
 	): Vacation {
 		try {
 			$vacation = $this->mapper->find($id, $userId);
-			if ($vacation->getStatus() !== Vacation::VACATION_PENDING) {
-				throw new Exception('Cannot edit a vacation request that is not pending');
-			}
-			$vacation->setStart($start);
-			$vacation->setEnd($end);
-			$vacation->setDayCount($dayCount);
-			$vacation->setSignature($signature);
-			$vacation->setSignatureVerified($signatureVerified);
-			$vacation->setReplacementUserId($replacementUserId);
-			$vacation->setManagerUserId($managerUserId);
-			$vacation->setStatus(Vacation::VACATION_PENDING);
-			return $this->mapper->update($vacation);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException $e) {
 			throw new VacationNotFound($e->getMessage());
 		}
+		if ($vacation->getStatus() !== Vacation::VACATION_PENDING) {
+			throw new VacationNotPending('Cannot edit a vacation request that is not pending');
+		}
+		$vacation->setStart($start);
+		$vacation->setEnd($end);
+		$vacation->setDayCount($dayCount);
+		$vacation->setSignature($signature);
+		$vacation->setSignatureVerified($signatureVerified);
+		$vacation->setReplacementUserId($replacementUserId);
+		$vacation->setManagerUserId($managerUserId);
+		$vacation->setStatus(Vacation::VACATION_PENDING);
+		return $this->mapper->update($vacation);
 	}
 
 	/**
@@ -120,6 +120,8 @@ class VacationService {
 
 	/**
 	 * @throws VacationNotFound
+	 * @throws VacationNotAuthorized
+	 * @throws VacationNotPending
 	 */
 	public function approve(int $id, string $managerUserId, string $statusMessage = ''): Vacation {
 		try {
@@ -129,11 +131,11 @@ class VacationService {
 		}
 
 		if ($vacation->getManagerUserId() !== $managerUserId) {
-			throw new VacationNotFound('Not authorized to approve this request');
+			throw new VacationNotAuthorized('Not authorized to approve this request');
 		}
 
 		if ($vacation->getStatus() !== Vacation::VACATION_PENDING) {
-			throw new Exception('Vacation request is not pending');
+			throw new VacationNotPending('Vacation request is not pending');
 		}
 
 		$vacation->setStatus(Vacation::VACATION_ACCEPTED);
@@ -144,6 +146,8 @@ class VacationService {
 
 	/**
 	 * @throws VacationNotFound
+	 * @throws VacationNotAuthorized
+	 * @throws VacationNotPending
 	 */
 	public function decline(int $id, string $managerUserId, string $statusMessage = ''): Vacation {
 		try {
@@ -153,11 +157,11 @@ class VacationService {
 		}
 
 		if ($vacation->getManagerUserId() !== $managerUserId) {
-			throw new VacationNotFound('Not authorized to decline this request');
+			throw new VacationNotAuthorized('Not authorized to decline this request');
 		}
 
 		if ($vacation->getStatus() !== Vacation::VACATION_PENDING) {
-			throw new Exception('Vacation request is not pending');
+			throw new VacationNotPending('Vacation request is not pending');
 		}
 
 		$vacation->setStatus(Vacation::VACATION_DECLINED);

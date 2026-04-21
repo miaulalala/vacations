@@ -90,6 +90,6 @@ export async function fetchCurrentUserManager() {
  *
  */
 export async function fetchConfig() {
-	const response = await axios.get(generateOcsUrl(baseUrl + '/config'))
+	const response = await axios.get(generateOcsUrl(baseUrl + '/settings'))
 	return response.data.ocs.data
 }

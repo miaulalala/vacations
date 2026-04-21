@@ -8,16 +8,21 @@ declare(strict_types=1);
 namespace OCA\Vacation\Controller;
 
 use OCA\Vacation\AppInfo\Application;
-use OCA\Vacation\Db\Vacation;
-use OCA\Vacation\Service\CalendarService;
 use OCA\Vacation\Service\AbsenceIntegrationService;
+use OCA\Vacation\Service\CalendarService;
 use OCA\Vacation\Service\NotificationService;
+use OCA\Vacation\Service\VacationNotAuthorized;
 use OCA\Vacation\Service\VacationNotFound;
+use OCA\Vacation\Service\VacationNotPending;
 use OCA\Vacation\Service\VacationService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCS\OCSBadRequestException;
+use OCP\AppFramework\OCS\OCSException;
+use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -40,10 +45,20 @@ class VacationController extends OCSController {
 		parent::__construct(Application::APP_ID, $request);
 	}
 
+	/**
+	 * @throws OCSException if the request is not authenticated.
+	 */
+	private function getUserId(): string {
+		if ($this->userId === null) {
+			throw new OCSException('Not authenticated', Http::STATUS_UNAUTHORIZED);
+		}
+		return $this->userId;
+	}
+
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	public function index(): DataResponse {
-		$vacations = $this->service->findAll($this->userId);
+		$vacations = $this->service->findAll($this->getUserId());
 		return new DataResponse($vacations);
 	}
 
@@ -58,9 +73,11 @@ class VacationController extends OCSController {
 		string $managerUserId = '',
 		string $message = '',
 	): DataResponse {
+		$userId = $this->getUserId();
+
 		// Auto-resolve manager if not provided
 		if ($managerUserId === '') {
-			$user = $this->userManager->get($this->userId);
+			$user = $this->userManager->get($userId);
 			if ($user !== null) {
 				$managerUids = $user->getManagerUids();
 				if (!empty($managerUids)) {
@@ -70,7 +87,18 @@ class VacationController extends OCSController {
 		}
 
 		if ($managerUserId === '') {
-			return new DataResponse(['message' => 'A manager must be specified'], Http::STATUS_BAD_REQUEST);
+			throw new OCSBadRequestException('A manager must be specified');
+		}
+
+		try {
+			$startDate = new \DateTimeImmutable($start);
+			$endDate = new \DateTimeImmutable($end);
+		} catch (\Exception $e) {
+			throw new OCSBadRequestException('Invalid start or end date');
+		}
+
+		if ($endDate < $startDate) {
+			throw new OCSBadRequestException('End date must not be before start date');
 		}
 
 		$minStartDays = (int)$this->config->getAppValue(Application::APP_ID, 'min_start_days', '0');
@@ -78,25 +106,23 @@ class VacationController extends OCSController {
 		$today = new \DateTimeImmutable('today');
 
 		if ($minStartDays > 0) {
-			$startDate = new \DateTimeImmutable($start);
 			$minStart = $today->modify('+' . $minStartDays . ' days');
 			if ($startDate < $minStart) {
-				return new DataResponse(['message' => 'Start date must be at least ' . $minStartDays . ' days in the future'], Http::STATUS_BAD_REQUEST);
+				throw new OCSBadRequestException('Start date must be at least ' . $minStartDays . ' days in the future');
 			}
 		}
 
 		if ($maxEndDays > 0) {
-			$endDate = new \DateTimeImmutable($end);
 			$maxEnd = $today->modify('+' . $maxEndDays . ' days');
 			if ($endDate > $maxEnd) {
-				return new DataResponse(['message' => 'End date must be at most ' . $maxEndDays . ' days in the future'], Http::STATUS_BAD_REQUEST);
+				throw new OCSBadRequestException('End date must be at most ' . $maxEndDays . ' days in the future');
 			}
 		}
 
 		$requestDate = date('Y-m-d');
 
 		$vacation = $this->service->create(
-			$this->userId,
+			$userId,
 			$start,
 			$end,
 			$dayCount,
@@ -131,7 +157,7 @@ class VacationController extends OCSController {
 		try {
 			$vacation = $this->service->update(
 				$id,
-				$this->userId,
+				$this->getUserId(),
 				$start,
 				$end,
 				$dayCount,
@@ -142,70 +168,88 @@ class VacationController extends OCSController {
 			);
 			return new DataResponse($vacation);
 		} catch (VacationNotFound $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			throw new OCSNotFoundException($e->getMessage());
+		} catch (VacationNotPending $e) {
+			throw new OCSException($e->getMessage(), Http::STATUS_CONFLICT);
 		}
 	}
 
 	#[NoAdminRequired]
 	public function destroy(int $id): DataResponse {
 		try {
-			$this->service->delete($id, $this->userId);
+			$this->service->delete($id, $this->getUserId());
 			return new DataResponse();
 		} catch (VacationNotFound $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			throw new OCSNotFoundException($e->getMessage());
 		}
 	}
 
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	public function pendingApprovals(): DataResponse {
-		$vacations = $this->service->findPendingForManager($this->userId);
+		$vacations = $this->service->findPendingForManager($this->getUserId());
 		return new DataResponse($vacations);
 	}
 
 	#[NoAdminRequired]
 	public function approve(int $id, string $statusMessage = ''): DataResponse {
 		try {
-			$vacation = $this->service->approve($id, $this->userId, $statusMessage);
+			$vacation = $this->service->approve($id, $this->getUserId(), $statusMessage);
+
+			$warnings = [];
 
 			try {
 				$this->notificationService->notifyRequester($vacation);
 			} catch (\Exception $e) {
 				$this->logger->error('Failed to send approval notification: ' . $e->getMessage(), ['exception' => $e]);
+				$warnings[] = 'notification';
 			}
 
 			try {
 				$this->calendarService->createVacationEvent($vacation);
 			} catch (\Exception $e) {
 				$this->logger->error('Failed to create calendar event: ' . $e->getMessage(), ['exception' => $e]);
+				$warnings[] = 'calendar';
 			}
 
 			try {
 				$this->absenceService->setAbsence($vacation);
 			} catch (\Exception $e) {
 				$this->logger->error('Failed to set absence: ' . $e->getMessage(), ['exception' => $e]);
+				$warnings[] = 'absence';
 			}
 
-			return new DataResponse($vacation);
+			return new DataResponse(['vacation' => $vacation, 'warnings' => $warnings]);
 		} catch (VacationNotFound $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			throw new OCSNotFoundException($e->getMessage());
+		} catch (VacationNotAuthorized $e) {
+			throw new OCSForbiddenException($e->getMessage());
+		} catch (VacationNotPending $e) {
+			throw new OCSException($e->getMessage(), Http::STATUS_CONFLICT);
 		}
 	}
 
 	#[NoAdminRequired]
 	public function decline(int $id, string $statusMessage = ''): DataResponse {
 		try {
-			$vacation = $this->service->decline($id, $this->userId, $statusMessage);
+			$vacation = $this->service->decline($id, $this->getUserId(), $statusMessage);
+
+			$warnings = [];
 
 			try {
 				$this->notificationService->notifyRequester($vacation);
 			} catch (\Exception $e) {
 				$this->logger->error('Failed to send decline notification: ' . $e->getMessage(), ['exception' => $e]);
+				$warnings[] = 'notification';
 			}
 
-			return new DataResponse($vacation);
+			return new DataResponse(['vacation' => $vacation, 'warnings' => $warnings]);
 		} catch (VacationNotFound $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			throw new OCSNotFoundException($e->getMessage());
+		} catch (VacationNotAuthorized $e) {
+			throw new OCSForbiddenException($e->getMessage());
+		} catch (VacationNotPending $e) {
+			throw new OCSException($e->getMessage(), Http::STATUS_CONFLICT);
 		}
 	}
 
@@ -225,17 +269,8 @@ class VacationController extends OCSController {
 
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
-	public function config(): DataResponse {
-		return new DataResponse([
-			'minStartDays' => (int)$this->config->getAppValue(Application::APP_ID, 'min_start_days', '0'),
-			'maxEndDays' => (int)$this->config->getAppValue(Application::APP_ID, 'max_end_days', '0'),
-		]);
-	}
-
-	#[NoAdminRequired]
-	#[NoCSRFRequired]
 	public function currentUserManager(): DataResponse {
-		$user = $this->userManager->get($this->userId);
+		$user = $this->userManager->get($this->getUserId());
 		if ($user === null) {
 			return new DataResponse(null);
 		}
