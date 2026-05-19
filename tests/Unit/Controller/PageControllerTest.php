@@ -6,8 +6,8 @@ declare(strict_types=1);
 
 namespace OCA\Vacation\Tests\Unit\Controller;
 
+use OCA\Vacation\Controller\PageController;
 use OCP\AppFramework\Http\TemplateResponse;
-
 use PHPUnit\Framework\TestCase;
 
 class PageControllerTest extends TestCase {

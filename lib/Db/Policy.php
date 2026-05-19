@@ -46,7 +46,7 @@ class Policy extends Entity implements JsonSerializable {
 	}
 
 	public function setDefinitionArray(array $definition): void {
-		$this->setDefinition(json_encode($definition, JSON_THROW_ON_ERROR));
+		$this->setDefinition(json_encode($definition, JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION));
 	}
 
 	public function jsonSerialize(): array {
