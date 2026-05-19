@@ -1,0 +1,17 @@
+{
+  "country": "FI",
+  "name": "Finland",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 24.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 2.0,
+      "workingYearStart": "04-01",
+      "carryoverDays": 12.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

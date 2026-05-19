@@ -1,0 +1,27 @@
+{
+  "country": "NZ",
+  "name": "New Zealand",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 20.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 20.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 9999.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    },
+    "BEREAVEMENT": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

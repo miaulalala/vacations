@@ -1,0 +1,37 @@
+{
+  "country": "MW",
+  "name": "Malawi",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 18.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.5,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 18.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    },
+    "MARRIAGE": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    },
+    "BEREAVEMENT": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

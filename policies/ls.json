@@ -1,0 +1,17 @@
+{
+  "country": "LS",
+  "name": "Lesotho",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 12.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 12.0,
+      "carryoverExpiryDays": 90,
+      "allowNegative": false
+    }
+  }
+}

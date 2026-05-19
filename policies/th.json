@@ -1,0 +1,17 @@
+{
+  "country": "TH",
+  "name": "Thailand",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 6.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 6.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 6.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

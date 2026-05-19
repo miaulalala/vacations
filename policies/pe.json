@@ -1,0 +1,17 @@
+{
+  "country": "PE",
+  "name": "Peru",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 22.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 22.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 15.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "country": "MR",
+  "name": "Mauritania",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 18.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.5,
+      "workingYearStart": "01-01",
+      "carryoverDays": 18.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

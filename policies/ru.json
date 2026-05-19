@@ -1,0 +1,17 @@
+{
+  "country": "RU",
+  "name": "Russia",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 20.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.6667,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 20.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": true
+    }
+  }
+}

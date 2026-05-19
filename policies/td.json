@@ -1,0 +1,17 @@
+{
+  "country": "TD",
+  "name": "Chad",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 22.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.8333,
+      "workingYearStart": "01-01",
+      "carryoverDays": 22.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

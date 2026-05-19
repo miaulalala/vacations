@@ -1,0 +1,47 @@
+{
+  "country": "LU",
+  "name": "Luxembourg",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 26.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 2.1667,
+      "workingYearStart": "01-01",
+      "carryoverDays": 26.0,
+      "carryoverExpiryDays": 90,
+      "allowNegative": false
+    },
+    "MARRIAGE": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    },
+    "BEREAVEMENT": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    },
+    "MOVING": {
+      "entitlementDays": 2.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 2.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

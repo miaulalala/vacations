@@ -1,0 +1,17 @@
+{
+  "country": "SO",
+  "name": "Somalia",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 15.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.25,
+      "workingYearStart": "01-01",
+      "carryoverDays": 15.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

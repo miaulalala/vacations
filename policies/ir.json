@@ -1,0 +1,37 @@
+{
+  "country": "IR",
+  "name": "Iran",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 26.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 26.0,
+      "workingYearStart": "03-21",
+      "carryoverDays": 26.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    },
+    "MARRIAGE": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "03-21",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    },
+    "BEREAVEMENT": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "03-21",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

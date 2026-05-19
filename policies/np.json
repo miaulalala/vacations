@@ -1,0 +1,17 @@
+{
+  "country": "NP",
+  "name": "Nepal",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 13.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.0833,
+      "workingYearStart": "07-16",
+      "carryoverDays": 60.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

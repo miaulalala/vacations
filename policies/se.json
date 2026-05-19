@@ -1,0 +1,17 @@
+{
+  "country": "SE",
+  "name": "Sweden",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 25.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 2.0833,
+      "workingYearStart": "04-01",
+      "carryoverDays": 25.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": true
+    }
+  }
+}

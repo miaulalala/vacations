@@ -1,0 +1,17 @@
+{
+  "country": "CU",
+  "name": "Cuba",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 24.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 2.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 24.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

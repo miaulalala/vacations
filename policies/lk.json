@@ -1,0 +1,17 @@
+{
+  "country": "LK",
+  "name": "Sri Lanka",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 14.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.1667,
+      "workingYearStart": "01-01",
+      "carryoverDays": 7.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "country": "NA",
+  "name": "Namibia",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 15.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.25,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

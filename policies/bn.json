@@ -1,0 +1,17 @@
+{
+  "country": "BN",
+  "name": "Brunei",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 7.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 0.5833,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 3.5,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}
