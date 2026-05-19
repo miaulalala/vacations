@@ -9,3 +9,4 @@ node_modules/
 /.php-cs-fixer.cache
 js/
 css/
+tests/results/*.xml
