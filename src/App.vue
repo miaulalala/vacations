@@ -1,282 +1,195 @@
 <!--
-	SPDX-FileCopyrightText: Anna Larch <anna.larch@gmx.net>
-	SPDX-License-Identifier: AGPL-3.0-or-later
+SPDX-FileCopyrightText: Anna Larch <anna.larch@gmx.net>
+SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 <template>
-	<div id="content" class="app-vacation">
-		<AppNavigation>
-			<AppNavigationNew v-if="!loading"
-				:text="t('vacation', 'New note')"
-				:disabled="false"
-				button-id="new-vacation-button"
-				button-class="icon-add"
-				@click="newNote" />
-			<ul>
-				<AppNavigationItem v-for="note in notes"
-					:key="note.id"
-					:title="note.title ? note.title : t('vacation', 'New note')"
-					:class="{active: currentNoteId === note.id}"
-					@click="openNote(note)">
-					<template slot="actions">
-						<ActionButton v-if="note.id === -1"
-							icon="icon-close"
-							@click="cancelNewNote(note)">
-							{{
-								t('vacation', 'Cancel note creation') }}
-						</ActionButton>
-						<ActionButton v-else
-							icon="icon-delete"
-							@click="deleteNote(note)">
-							{{
-								t('vacation', 'Delete note') }}
-						</ActionButton>
-					</template>
-				</AppNavigationItem>
-			</ul>
-		</AppNavigation>
-		<AppContent>
-			<form>
-				<NcDateTimePickerNative id="start-date"
-					v-model="start"
-					label="Start Date"
-					type="date" />
-				<NcDateTimePickerNative id="end-date"
-					v-model="end"
-					label="End Date"
-					type="date" />
-				<NcTextField :value.sync="days" label="Number of days" />
-				<NcTextField :value.sync="signature" label="Signature" />
-				<NcCheckboxRadioSwitch :checked.sync="signed">
-					I confirm that by typing my name I have signed this vacation request
-				</NcCheckboxRadioSwitch>
-				<NcButton title="Save" :disabled="!canSave" @click="createVacation">
-					Save
-				</NcButton>
-			</form>
-		</AppContent>
-	</div>
+	<NcContent app-name="vacation">
+		<NcAppNavigation>
+			<NcAppNavigationItem
+				class="navigation-item"
+				:name="t('vacation', 'New Request')"
+				:active="activeTab === 'new'"
+				@click="activeTab = 'new'">
+				<template #icon>
+					<NcIconSvgWrapper :path="mdiUmbrellaBeachOutline" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem
+				class="navigation-item"
+				:name="t('vacation', 'My Requests')"
+				:active="activeTab === 'requests'"
+				@click="activeTab = 'requests'">
+				<template #icon>
+					<NcIconSvgWrapper :path="mdiFormatListBulleted" />
+				</template>
+			</NcAppNavigationItem>
+			<NcAppNavigationItem
+				v-if="pendingApprovals.length > 0"
+				class="navigation-item"
+				:name="t('vacation', 'Pending Approvals')"
+				:active="activeTab === 'approvals'"
+				@click="activeTab = 'approvals'">
+				<template #icon>
+					<NcIconSvgWrapper :path="mdiClipboardCheckOutline" />
+				</template>
+				<template #counter>
+					<NcCounterBubble :count="pendingApprovals.length" />
+				</template>
+			</NcAppNavigationItem>
+		</NcAppNavigation>
+
+		<NcAppContent>
+			<div v-if="activeTab === 'new'" class="vacation-tab">
+				<VacationForm
+					v-if="managerLoaded"
+					:preset-manager="currentManager"
+					:min-start-days="appConfig.minStartDays"
+					:max-end-days="appConfig.maxEndDays"
+					@created="onVacationCreated" />
+			</div>
+
+			<div v-if="activeTab === 'requests'" class="vacation-tab">
+				<VacationList
+					:vacations="myVacations"
+					@delete="onDeleteVacation" />
+			</div>
+
+			<div v-if="activeTab === 'approvals'" class="vacation-tab">
+				<ApprovalList
+					:vacations="pendingApprovals"
+					@updated="loadPendingApprovals" />
+			</div>
+		</NcAppContent>
+	</NcContent>
 </template>
 
-<script>
-import {
-	NcActionButton as ActionButton,
-	NcAppContent as AppContent,
-	NcAppNavigation as AppNavigation,
-	NcAppNavigationItem as AppNavigationItem,
-	NcAppNavigationNew as AppNavigationNew,
-	NcTextField,
-	NcDatetimePicker,
-	NcDateTimePickerNative,
-	NcCheckboxRadioSwitch,
-	NcButton,
-} from '@nextcloud/vue'
-
-import '@nextcloud/dialogs/styles/toast.scss'
-import { generateUrl, generateOcsUrl } from '@nextcloud/router'
+<script setup>
+import { mdiClipboardCheckOutline, mdiFormatListBulleted, mdiUmbrellaBeachOutline } from '@mdi/js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import axios from '@nextcloud/axios'
-import { formatDate } from './date.js'
+import { t } from '@nextcloud/l10n'
+import {
+	NcAppContent,
+	NcAppNavigation,
+	NcAppNavigationItem,
+	NcContent,
+	NcCounterBubble,
+} from '@nextcloud/vue'
+import { onMounted, ref } from 'vue'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import ApprovalList from './components/ApprovalList.vue'
+import VacationForm from './components/VacationForm.vue'
+import VacationList from './components/VacationList.vue'
+import {
+	deleteVacation,
+	fetchConfig,
+	fetchCurrentUserManager,
+	fetchMyVacations,
+	fetchPendingApprovals as fetchPending,
+} from './api.js'
 
-export default {
-	name: 'App',
-	components: {
-		ActionButton,
-		AppContent,
-		AppNavigation,
-		AppNavigationItem,
-		AppNavigationNew,
-		NcDateTimePickerNative,
-		NcCheckboxRadioSwitch,
-		NcTextField,
-		NcButton,
-	},
-	data() {
-		return {
-			notes: [],
-			currentNoteId: null,
-			updating: false,
-			loading: true,
+const activeTab = ref('new')
+const myVacations = ref([])
+const pendingApprovals = ref([])
+const currentManager = ref(null)
+const managerLoaded = ref(false)
+const appConfig = ref({ minStartDays: 0, maxEndDays: 0 })
 
-			start: new Date(),
-			end: new Date(),
-			days: '0',
-			signature: '',
-			signed: false,
-		}
-	},
-	computed: {
-		/**
-		 * Return the currently selected note object
-		 *
-		 * @return {object | null}
-		 */
-		currentNote() {
-			if (this.currentNoteId === null) {
-				return null
-			}
-			return this.notes.find((note) => note.id === this.currentNoteId)
-		},
-
-		/**
-		 * Returns true if a note is selected and its title is not empty
-		 *
-		 * @return {boolean}
-		 */
-		savePossible() {
-			return this.currentNote && this.currentNote.title !== ''
-		},
-
-		canSave() {
-			return this.signed && this.signature !== '' && !isNaN(parseInt(this.days))
-		},
-	},
-	/**
-	 * Fetch list of notes when the component is loaded
-	 */
-	async mounted() {
-		try {
-			const response = await axios.get(generateUrl('/apps/vacation/notes'))
-			this.notes = response.data
-		} catch (e) {
-			console.error(e)
-			showError(t('notestutorial', 'Could not fetch notes'))
-		}
-		this.loading = false
-	},
-
-	methods: {
-		async createVacation() {
-			const url = generateOcsUrl('/apps/vacation/api/v1/vacation')
-			await axios.post(url, {
-				start: formatDate(this.start),
-				end: formatDate(this.end),
-				dayCount: parseInt(this.days),
-				signature: this.signature,
-				signatureVerified: this.signed,
-			})
-		},
-		/**
-		 * Create a new note and focus the note content field automatically
-		 *
-		 * @param {object} note Note object
-		 */
-		openNote(note) {
-			if (this.updating) {
-				return
-			}
-			this.currentNoteId = note.id
-			this.$nextTick(() => {
-				this.$refs.content.focus()
-			})
-		},
-		/**
-		 * Action tiggered when clicking the save button
-		 * create a new note or save
-		 */
-		saveNote() {
-			if (this.currentNoteId === -1) {
-				this.createNote(this.currentNote)
-			} else {
-				this.updateNote(this.currentNote)
-			}
-		},
-		/**
-		 * Create a new note and focus the note content field automatically
-		 * The note is not yet saved, therefore an id of -1 is used until it
-		 * has been persisted in the backend
-		 */
-		newNote() {
-			if (this.currentNoteId !== -1) {
-				this.currentNoteId = -1
-				this.notes.push({
-					id: -1,
-					title: '',
-					content: '',
-				})
-				this.$nextTick(() => {
-					this.$refs.title.focus()
-				})
-			}
-		},
-		/**
-		 * Abort creating a new note
-		 */
-		cancelNewNote() {
-			this.notes.splice(this.notes.findIndex((note) => note.id === -1), 1)
-			this.currentNoteId = null
-		},
-		/**
-		 * Create a new note by sending the information to the server
-		 *
-		 * @param {object} note Note object
-		 */
-		async createNote(note) {
-			this.updating = true
-			try {
-				const response = await axios.post(generateUrl('/apps/vacation/notes'), note)
-				const index = this.notes.findIndex((match) => match.id === this.currentNoteId)
-				this.$set(this.notes, index, response.data)
-				this.currentNoteId = response.data.id
-			} catch (e) {
-				console.error(e)
-				showError(t('notestutorial', 'Could not create the note'))
-			}
-			this.updating = false
-		},
-		/**
-		 * Update an existing note on the server
-		 *
-		 * @param {object} note Note object
-		 */
-		async updateNote(note) {
-			this.updating = true
-			try {
-				await axios.put(generateUrl(`/apps/vacation/notes/${note.id}`), note)
-			} catch (e) {
-				console.error(e)
-				showError(t('notestutorial', 'Could not update the note'))
-			}
-			this.updating = false
-		},
-		/**
-		 * Delete a note, remove it from the frontend and show a hint
-		 *
-		 * @param {object} note Note object
-		 */
-		async deleteNote(note) {
-			try {
-				await axios.delete(generateUrl(`/apps/vacation/notes/${note.id}`))
-				this.notes.splice(this.notes.indexOf(note), 1)
-				if (this.currentNoteId === note.id) {
-					this.currentNoteId = null
-				}
-				showSuccess(t('vacation', 'Note deleted'))
-			} catch (e) {
-				console.error(e)
-				showError(t('vacation', 'Could not delete the note'))
-			}
-		},
-	},
+/**
+ *
+ */
+async function loadMyVacations() {
+	try {
+		myVacations.value = await fetchMyVacations()
+	} catch (e) {
+		console.error(e)
+		showError(t('vacation', 'Could not load vacation requests'))
+	}
 }
+
+/**
+ *
+ */
+async function loadPendingApprovals() {
+	try {
+		pendingApprovals.value = await fetchPending()
+	} catch (e) {
+		console.error(e)
+	}
+}
+
+/**
+ *
+ */
+async function loadCurrentManager() {
+	try {
+		currentManager.value = await fetchCurrentUserManager()
+	} catch (e) {
+		console.error(e)
+	}
+	managerLoaded.value = true
+}
+
+/**
+ *
+ */
+async function loadConfig() {
+	try {
+		appConfig.value = await fetchConfig()
+	} catch (e) {
+		console.error(e)
+	}
+}
+
+/**
+ *
+ */
+async function onVacationCreated() {
+	await loadMyVacations()
+}
+
+/**
+ *
+ * @param id
+ */
+async function onDeleteVacation(id) {
+	try {
+		await deleteVacation(id)
+		showSuccess(t('vacation', 'Vacation request deleted'))
+		await loadMyVacations()
+	} catch (e) {
+		console.error(e)
+		showError(t('vacation', 'Could not delete vacation request'))
+	}
+}
+
+onMounted(async () => {
+	await Promise.all([
+		loadMyVacations(),
+		loadPendingApprovals(),
+		loadCurrentManager(),
+		loadConfig(),
+	])
+})
 </script>
 
-<style scoped>
-	#app-content > div {
-		width: 100%;
-		height: 100%;
-		padding: 20px;
-		display: flex;
-		flex-direction: column;
-		flex-grow: 1;
+<style lang="scss" scoped>
+.vacation-tab {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.navigation-item {
+	padding-inline: calc(var(--default-grid-baseline) * 2);
+	margin-block: var(--default-grid-baseline);
+
+	:deep(.app-navigation-entry-link) {
+		padding-inline-start: var(--default-grid-baseline);
 	}
 
-	input[type='text'] {
-		width: 100%;
+	:deep(.app-navigation-entry__name) {
+		padding-inline-start: calc(2 * var(--default-grid-baseline));
+		font-weight: 500;
 	}
-
-	textarea {
-		flex-grow: 1;
-		width: 100%;
-	}
+}
 </style>

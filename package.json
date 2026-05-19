@@ -1,43 +1,42 @@
 {
   "name": "vacation",
   "description": "Vacation Requests",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "Anna Larch <anna.larch@gmx.net>",
-  "contributors": [],
-  "bugs": {
-    "url": "https://github.com/miaulalala/vacations/issues"
-  },
   "license": "agpl",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "webpack --node-env production --progress",
-    "dev": "webpack --node-env development --progress",
-    "watch": "webpack --node-env development --progress --watch",
-    "serve": "webpack --node-env development serve --progress",
-    "lint": "eslint --ext .js,.vue src",
-    "lint:fix": "eslint --ext .js,.vue src --fix",
+    "build": "vite build",
+    "dev": "vite build --mode development",
+    "watch": "vite build --mode development --watch",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue",
     "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix"
   },
   "dependencies": {
-    "@nextcloud/axios": "^1.10.0",
-    "@nextcloud/dialogs": "^3.1.4",
-    "@nextcloud/router": "^2.0.0",
-    "@nextcloud/vue": "^8.0.0-beta.6",
-    "vue": "^2.7.0"
+    "@nextcloud/axios": "^2.5.0",
+    "@nextcloud/dialogs": "^7.0.0",
+    "@nextcloud/initial-state": "^2.2.0",
+    "@nextcloud/router": "^3.0.0",
+    "@nextcloud/vue": "^9.0.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@nextcloud/vite-config": "^2.5.0",
+    "@nextcloud/browserslist-config": "^3.0.0",
+    "@nextcloud/eslint-config": "9.0.0-rc.6",
+    "@nextcloud/stylelint-config": "^3.0.0"
   },
   "browserslist": [
     "extends @nextcloud/browserslist-config"
   ],
-  "engines": {
-    "node": "^16.0.0",
-    "npm": "^7.0.0 || ^8.0.0"
+  "overrides": {
+    "eslint-plugin-vue": "10.6.2"
   },
-  "devDependencies": {
-    "@nextcloud/babel-config": "^1.0.0",
-    "@nextcloud/browserslist-config": "^2.2.0",
-    "@nextcloud/eslint-config": "^8.0.0",
-    "@nextcloud/stylelint-config": "^2.1.2",
-    "@nextcloud/webpack-vue-config": "^5.2.1"
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || ^24.0.0",
+    "npm": "^10.0.0 || ^11.0.0"
   }
 }

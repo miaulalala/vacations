@@ -2,62 +2,49 @@
 
 declare(strict_types=1);
 
-/**
- * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: Anna Larch <anna.larch@gmx.net>
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 namespace OCA\Vacation\Settings;
 
-use OCA\Mail\AppInfo\Application;
-use OCA\Mail\Integration\GoogleIntegration;
-use OCA\Mail\Integration\MicrosoftIntegration;
-use OCA\Mail\Service\AiIntegrations\AiIntegrationsService;
-use OCA\Mail\Service\AntiSpamService;
-use OCA\Mail\Service\Provisioning\Manager as ProvisioningManager;
+use OCA\Vacation\AppInfo\Application;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
-use OCP\IInitialStateService;
-use OCP\LDAP\ILDAPProvider;
 use OCP\Settings\ISettings;
 use OCP\Util;
 
 class AdminSettings implements ISettings {
 
-	public function __construct(private IInitialState $initialStateService, private IConfig $config) {
+	public function __construct(
+		private IInitialState $initialStateService,
+		private IConfig $config,
+	) {
 	}
 
-	public function getForm() {
-		Util::addScript(\OCA\Vacation\AppInfo\Application::APP_ID, 'vacation-admin_settings');
+	public function getForm(): TemplateResponse {
+		Util::addScript(Application::APP_ID, 'vacation-admin-settings');
+		Util::addStyle(Application::APP_ID, 'vacation-admin-settings');
 		$this->initialStateService->provideInitialState(
 			'vacation_email',
-			$this->config->getAppValue(Application::APP_ID, 'vacation_email')
+			$this->config->getAppValue(Application::APP_ID, 'vacation_email', '')
 		);
-		return new TemplateResponse(Application::APP_ID, 'main');
+		$this->initialStateService->provideInitialState(
+			'min_start_days',
+			(int)$this->config->getAppValue(Application::APP_ID, 'min_start_days', '0')
+		);
+		$this->initialStateService->provideInitialState(
+			'max_end_days',
+			(int)$this->config->getAppValue(Application::APP_ID, 'max_end_days', '0')
+		);
+		return new TemplateResponse(Application::APP_ID, 'admin-settings', [], TemplateResponse::RENDER_AS_BLANK);
 	}
 
-	public function getSection() {
+	public function getSection(): string {
 		return 'vacation';
 	}
 
-	public function getPriority() {
+	public function getPriority(): int {
 		return 90;
 	}
 }

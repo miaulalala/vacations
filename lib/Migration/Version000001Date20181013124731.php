@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 // SPDX-FileCopyrightText: Anna Larch <anna.larch@gmx.net>
 // SPDX-License-Identifier: AGPL-3.0-or-later
@@ -8,8 +9,8 @@ namespace OCA\Vacation\Migration;
 use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version000001Date20181013124731 extends SimpleMigrationStep {
 
