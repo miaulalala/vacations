@@ -39,6 +39,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setRequestDate(?string $requestDate)
  * @method ?string getMessage()
  * @method void setMessage(?string $message)
+ * @method string getLeaveTypeCode()
+ * @method void setLeaveTypeCode(string $leaveTypeCode)
  */
 class Vacation extends Entity implements JsonSerializable {
 
@@ -60,6 +62,7 @@ class Vacation extends Entity implements JsonSerializable {
 	protected ?string $managerUserId = null;
 	protected ?string $requestDate = null;
 	protected ?string $message = null;
+	protected string $leaveTypeCode = LeaveType::CODE_VACATION;
 
 	public function __construct() {
 		$this->addType('user_id', 'string');
@@ -76,6 +79,7 @@ class Vacation extends Entity implements JsonSerializable {
 		$this->addType('manager_user_id', 'string');
 		$this->addType('request_date', 'string');
 		$this->addType('message', 'string');
+		$this->addType('leave_type_code', 'string');
 	}
 
 	public function jsonSerialize(): array {
@@ -95,6 +99,7 @@ class Vacation extends Entity implements JsonSerializable {
 			'managerUserId' => $this->managerUserId,
 			'requestDate' => $this->requestDate,
 			'message' => $this->message,
+			'leaveTypeCode' => $this->leaveTypeCode,
 		];
 	}
 }
