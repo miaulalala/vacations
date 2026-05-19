@@ -9,14 +9,18 @@ namespace OCA\Vacation\Service;
 
 use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\Vacation\Db\Vacation;
+use OCP\Theming\ThemingDefaults;
 use Psr\Log\LoggerInterface;
 use Sabre\VObject\Component\VCalendar;
 
 class CalendarService {
 
+	private const FALLBACK_COLOR = '#0082c9';
+
 	public function __construct(
 		private CalDavBackend $calDavBackend,
 		private LoggerInterface $logger,
+		private ?ThemingDefaults $theming = null,
 	) {
 	}
 
@@ -26,19 +30,22 @@ class CalendarService {
 
 		$calendarId = null;
 		foreach ($calendars as $calendar) {
-			if ($calendar['uri'] === 'personal') {
+			if ($calendar['uri'] === 'vacation') {
 				$calendarId = $calendar['id'];
 				break;
 			}
 		}
 
-		// Fall back to first calendar if "personal" not found
-		if ($calendarId === null && !empty($calendars)) {
-			$calendarId = $calendars[0]['id'];
+		if ($calendarId === null) {
+			$color = $this->theming?->getColorPrimary() ?? self::FALLBACK_COLOR;
+			$calendarId = $this->calDavBackend->createCalendar($principalUri, 'vacation', [
+				'{DAV:}displayname' => 'Vacation',
+				'{http://apple.com/ns/ical/}calendar-color' => $color,
+			]);
 		}
 
 		if ($calendarId === null) {
-			$this->logger->warning('No calendar found for user ' . $vacation->getUserId());
+			$this->logger->warning('Could not find or create vacation calendar for user ' . $vacation->getUserId());
 			return;
 		}
 
