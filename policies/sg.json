@@ -1,0 +1,17 @@
+{
+  "country": "SG",
+  "name": "Singapore",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 7.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 0.5833,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 3.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

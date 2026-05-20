@@ -1,0 +1,17 @@
+{
+  "country": "PG",
+  "name": "Papua New Guinea",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 10.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 0.8333,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 10.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

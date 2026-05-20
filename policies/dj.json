@@ -1,0 +1,17 @@
+{
+  "country": "DJ",
+  "name": "Djibouti",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 30.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 2.5,
+      "workingYearStart": "01-01",
+      "carryoverDays": 30.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

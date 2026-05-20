@@ -1,0 +1,17 @@
+{
+  "country": "MY",
+  "name": "Malaysia",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 8.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 0.6667,
+      "workingYearStart": "01-01",
+      "carryoverDays": 8.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

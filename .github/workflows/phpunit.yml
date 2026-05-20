@@ -1,0 +1,116 @@
+# SPDX-FileCopyrightText: Anna Larch <anna.larch@gmx.net>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: PHPUnit
+
+on: pull_request
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phpunit-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest-low
+    outputs:
+      php-versions: ${{ steps.versions.outputs.php-versions }}
+      server-versions: ${{ steps.versions.outputs.branches-deploy }}
+    steps:
+      - name: Checkout app
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Get version matrix
+        id: versions
+        uses: icewind1991/nextcloud-version-matrix@58becf3b4bb6dc6cef677b15e2fd8e7d48c0908f # v1.3.1
+
+  phpunit-unit:
+    runs-on: ubuntu-latest
+    needs: matrix
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ${{ fromJson(needs.matrix.outputs.php-versions) }}
+        server-versions: ${{ fromJson(needs.matrix.outputs.server-versions) }}
+
+    name: Unit – php${{ matrix.php-versions }} / NC${{ matrix.server-versions }}
+
+    steps:
+      - name: Checkout server
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: nextcloud/server
+          ref: ${{ matrix.server-versions }}
+          path: nextcloud
+          persist-credentials: false
+          submodules: true
+
+      - name: Checkout app
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          path: nextcloud/apps-extra/vacation
+          persist-credentials: false
+
+      - name: Set up php ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@85c019fd025f731a83ac9fbc1cdd9ba69d76b6e3 # v2.36.0 with verbose logging due to stuck runs
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
+          coverage: none
+          ini-file: development
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install server dependencies
+        working-directory: nextcloud
+        run: composer install --no-interaction
+
+      - name: Install app dependencies
+        working-directory: nextcloud/apps-extra/vacation
+        run: composer install --no-interaction
+
+      - name: Set up Nextcloud
+        working-directory: nextcloud
+        run: php occ maintenance:install
+          --database=sqlite
+          --database-name=nextcloud
+          --admin-user=admin
+          --admin-pass=password
+          --data-dir=$(pwd)/data
+
+      - name: Enable app
+        working-directory: nextcloud
+        run: php occ app:enable --force vacation
+
+      - name: Run unit tests
+        working-directory: nextcloud/apps-extra/vacation
+        run: php ../../vendor-bin/phpunit/vendor/phpunit/phpunit/phpunit
+          -c tests/phpunit.xml
+          --log-junit tests/results/unit.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: test-results-unit-php${{ matrix.php-versions }}-nc${{ matrix.server-versions }}
+          path: nextcloud/apps-extra/vacation/tests/results/
+          if-no-files-found: ignore
+
+  summary:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest-low
+    needs: phpunit-unit
+
+    if: always()
+
+    name: phpunit-summary
+
+    steps:
+      - name: Summary status
+        run: if ${{ needs.phpunit-unit.result != 'success' && needs.phpunit-unit.result != 'skipped' }}; then exit 1; fi

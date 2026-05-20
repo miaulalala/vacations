@@ -1,0 +1,27 @@
+{
+  "country": "CO",
+  "name": "Colombia",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 15.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.25,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 7.5,
+      "carryoverExpiryDays": 730,
+      "allowNegative": false
+    },
+    "BEREAVEMENT": {
+      "entitlementDays": 5.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 5.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

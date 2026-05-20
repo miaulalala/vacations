@@ -1,0 +1,17 @@
+{
+  "country": "IL",
+  "name": "Israel",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 12.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 12.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 24.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

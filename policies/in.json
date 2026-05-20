@@ -1,0 +1,17 @@
+{
+  "country": "IN",
+  "name": "India",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 12.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 30.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

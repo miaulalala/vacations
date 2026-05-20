@@ -1,0 +1,17 @@
+{
+  "country": "SL",
+  "name": "Sierra Leone",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 14.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.1667,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 14.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

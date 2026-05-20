@@ -1,0 +1,17 @@
+{
+  "country": "KE",
+  "name": "Kenya",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 21.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 1.75,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 21.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

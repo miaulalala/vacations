@@ -1,0 +1,17 @@
+{
+  "country": "AT",
+  "name": "Austria",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 25.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 25.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 25.0,
+      "carryoverExpiryDays": 730,
+      "allowNegative": true
+    }
+  }
+}

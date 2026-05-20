@@ -6,4 +6,7 @@
 /build/
 node_modules/
 /.php_cs.cache
-js/*hot-update.*
+/.php-cs-fixer.cache
+js/
+css/
+tests/results/*.xml

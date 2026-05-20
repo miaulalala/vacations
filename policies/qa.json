@@ -1,0 +1,37 @@
+{
+  "country": "QA",
+  "name": "Qatar",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 15.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 15.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 7.0,
+      "carryoverExpiryDays": 730,
+      "allowNegative": false
+    },
+    "MARRIAGE": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    },
+    "BEREAVEMENT": {
+      "entitlementDays": 3.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 3.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 0.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

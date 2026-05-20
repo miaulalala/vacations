@@ -1,0 +1,17 @@
+{
+  "country": "BD",
+  "name": "Bangladesh",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 10.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 10.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 40.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

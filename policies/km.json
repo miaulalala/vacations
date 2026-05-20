@@ -1,0 +1,17 @@
+{
+  "country": "KM",
+  "name": "Comoros",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 26.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 2.1667,
+      "workingYearStart": "01-01",
+      "carryoverDays": 26.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": false
+    }
+  }
+}

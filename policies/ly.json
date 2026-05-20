@@ -1,0 +1,17 @@
+{
+  "country": "LY",
+  "name": "Libya",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 22.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 22.0,
+      "workingYearStart": "01-01",
+      "carryoverDays": 22.0,
+      "carryoverExpiryDays": 730,
+      "allowNegative": false
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "country": "JP",
+  "name": "Japan",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 10.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 10.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 10.0,
+      "carryoverExpiryDays": 730,
+      "allowNegative": false
+    }
+  }
+}

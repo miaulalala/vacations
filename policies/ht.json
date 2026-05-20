@@ -1,0 +1,17 @@
+{
+  "country": "HT",
+  "name": "Haiti",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 15.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 15.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 15.0,
+      "carryoverExpiryDays": 730,
+      "allowNegative": false
+    }
+  }
+}

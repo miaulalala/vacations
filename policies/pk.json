@@ -1,0 +1,17 @@
+{
+  "country": "PK",
+  "name": "Pakistan",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 14.0,
+      "accrualPolicy": "lump_sum",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 14.0,
+      "workingYearStart": "anniversary",
+      "carryoverDays": 30.0,
+      "carryoverExpiryDays": null,
+      "allowNegative": false
+    }
+  }
+}

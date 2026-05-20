@@ -1,0 +1,17 @@
+{
+  "country": "NO",
+  "name": "Norway",
+  "source": "bundled",
+  "leaveTypes": {
+    "VACATION": {
+      "entitlementDays": 25.0,
+      "accrualPolicy": "monthly",
+      "accrualInterval": null,
+      "accrualDaysPerInterval": 2.0833,
+      "workingYearStart": "01-01",
+      "carryoverDays": 12.0,
+      "carryoverExpiryDays": 365,
+      "allowNegative": true
+    }
+  }
+}
